@@ -7,6 +7,9 @@ None: empty
 
 def get_path(blocks, grid_size):
 
+    grid_size = list(grid_size)
+    grid_size[0] += 1
+
     grid = [[None for y in range(grid_size[1])] for x in range(grid_size[0])]
 
     candidates = []
@@ -15,18 +18,18 @@ def get_path(blocks, grid_size):
         grid[block.pos[0]][block.pos[1]] = -1
 
     for y in range(grid_size[1]):
-        grid[0][y] = 0        
+        if grid[0][y] == None:
+            grid[0][y] = 0        
+            candidates.append((0, y, 0))
 
-        if grid[1][y] == None:
-            candidates.append((1, y, 1))
+    #candidates = [(0,0,0)]
+    #grid[0][0] = 0
 
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-    print(candidates)
 
     while True:
         current = candidates.pop(0)
-        #print(current[2])
 
         for opt in directions:
             new_pos = opt[0] + current[0], opt[1] + current[1]
@@ -40,9 +43,10 @@ def get_path(blocks, grid_size):
                     # is the spot empty?
                     if grid[new_pos[0]][new_pos[1]] == None:
                         candidates.append(new_pos + (current[2] + 1,))
-            
-        grid[current[0]][current[1]] = current[2]
+                        
+                        grid[new_pos[0]][new_pos[1]] = current[2] + 1
 
+            
         if len(candidates) == 0:
             return False
 
@@ -52,8 +56,6 @@ def get_path(blocks, grid_size):
                 stop = True
                 break
         if stop: break
-
-    for i in grid: print(i)
 
     # backtrack to find path
 
@@ -95,6 +97,9 @@ def get_path(blocks, grid_size):
                         positions.append(new_pos)
                         break
 
+    last_pos = positions[len(positions) - 1]
+    new = list(last_pos); new[0] -= 1
+    positions.append(new)
+
     positions.reverse()
-    print(positions)
     return positions

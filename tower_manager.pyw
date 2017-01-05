@@ -7,15 +7,20 @@ class Handler:
         self.playing_grid = playing_grid
         self.usable_towers = [block]
         self.placed_towers = []
+        self.blocks = []
         self.window = window
         self.window_scale = window_scale
 
 
-    def update(self, mouse_states, mouse_pos):
-        self.selection_color(mouse_pos)
-        self.show_menu()
-        self.manage_towers()
-        self.tower_select(mouse_states, mouse_pos)
+    def update(self, mouse_states, mouse_pos, phase):
+
+        if phase == 0:
+            self.selection_color(mouse_pos)
+            self.show_menu()
+            self.manage_towers()
+            self.tower_select(mouse_states, mouse_pos)
+        else:
+            self.manage_towers()
 
 
     # MENU
@@ -78,8 +83,15 @@ class Handler:
                         okay = False
                         break
                 if okay:
-                    self.placed_towers.append(self.held_tower.Tower(mouse_pos))
+
+                    if self.held_tower == block:
+                        self.blocks.append(self.held_tower.Tower(mouse_pos))
+                        self.placed_towers.append(self.held_tower.Tower(mouse_pos))
+                    else:
+                        self.placed_towers.append(self.held_tower.Tower(mouse_pos))
                     self.window.blit(transform.scale(self.held_tower.img, (self.window_scale, self.window_scale)), (mouse_pos[0] * self.window_scale, mouse_pos[1] * self.window_scale))
-                    self.held_tower = None
+
+                    k = key.get_pressed()
+                    if not k[K_LSHIFT]: self.held_tower = None
             else:
                 self.window.blit(transform.scale(self.held_tower.img, (self.window_scale, self.window_scale)), (mouse_pos[0] * self.window_scale, mouse_pos[1] * self.window_scale))

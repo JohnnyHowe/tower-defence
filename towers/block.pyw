@@ -6,3 +6,4 @@ class Tower:
     def __init__(self, pos):
         self.pos = pos
         self.img = img
+        self.id = 'block'
