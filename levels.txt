@@ -2,7 +2,8 @@
 
 1: {
 	'enemies':[
-		('walker', 5)
-		]
+		('walker', 10, 0.5, 2)
+		],
+	'start_money': 1000
 	}
 }

@@ -89,7 +89,6 @@ def get_path(blocks, grid_size):
             new_pos = opt[0] + last_pos[0], opt[1] + last_pos[1]
 
             # Check new pos
-            
             if new_pos[0] >= 0 and new_pos[0] <= grid_size[0] - 1:
                 if new_pos[1] >= 0 and new_pos[1] <= grid_size[1] - 1:
             
@@ -102,4 +101,11 @@ def get_path(blocks, grid_size):
     positions.append(new)
 
     positions.reverse()
+    
+   # Adding more points onto the end so the enemies don't stop
+    for extra_pos in range(5):
+        last = list(positions[len(positions) - 1])
+        pos = last[0] + 1, last[1]
+        positions.append(pos)
+
     return positions
