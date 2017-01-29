@@ -4,6 +4,8 @@
 	'enemies':[
 		('walker', 10, 0.5, 2)
 		],
-	'start_money': 1000
+	'start_money': 1000,
+	'grid_size': (10, 5),
+	'background': (230, 230, 230),
 	}
 }

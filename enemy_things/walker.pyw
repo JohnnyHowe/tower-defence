@@ -1,5 +1,5 @@
+from pygame import *
 import math
-
 
 class Enemy:
 
@@ -13,34 +13,59 @@ class Enemy:
         self.max_health = 10
         self.tick = 0
         self.pos = None
+        self.img = image.load('images\\enemies\\walker.png')
 
-    def update(self, dt, playing_grid):
+    def update(self, dt, playing_grid, window, window_scale):
         self.tick += dt
-        return self.move(dt, playing_grid)
+        self.move(dt, playing_grid)
+        self.show(window, window_scale)
+
+    def show(self, window, window_scale):
+        pos, angle = self.get_info()
+        center_pos = list(pos)
+
+        try:            
+            center_pos[0] += 0.5; center_pos[1] += 0.5
+            center_pos[0] *= window_scale; center_pos[1] *= window_scale
+
+            img = transform.scale(self.img, (window_scale, window_scale))
+            img = transform.rotate(img, angle)
+
+            rect = img.get_rect()
+            pos = center_pos[0] - rect.width / 2, center_pos[1] - rect.height / 2
+
+            window.blit(img, pos)
+
+        except Exception as error:
+            print('WARNGIN DOOD, ERROR SHOWING WALKER')
+            print(error)
 
 
     def move(self, dt, playing_grid):
         dist_to_travel = self.speed * dt
         new_dist = self.dist + dist_to_travel
         self.dist = new_dist
+
+    def on_path(self, playing_grid):
         
         # Is it past the destination
         try:
-            value = self.get_pos()[0][0]
+            value = self.get_info()[0][0]
         except:
             value = 0
 
         if value > playing_grid[0]:
-            return True
+            return False
+        return False
 
     def get_rect(self, window_scale):
-        pos, angle = self.get_pos()
+        pos, angle = self.get_info()
 
         width = window_scale / 16 * 14
 
         return pos[0] * window_scale, pos[1] * window_scale, width, width
 
-    def get_pos(self):
+    def get_info(self):
         
         # where was the last full position?
         last_full = self.path[int(self.dist)][:2]
