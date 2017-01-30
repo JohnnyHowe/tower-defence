@@ -7,7 +7,7 @@
             "request": "launch",
             "stopOnEntry": false,
             "pythonPath": "${config.python.pythonPath}",
-            "program": "${file}",
+            "program": "${workspaceRoot}\\run_game.pyw",
             "cwd": "${workspaceRoot}",
             "debugOptions": [
                 "WaitOnAbnormalExit",

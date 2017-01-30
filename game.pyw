@@ -25,6 +25,7 @@ def run(level, window_size):
     rows = math.ceil(num / game_grid[0])
     playing_grid = list(game_grid)
     playing_grid[1] += rows
+    tower_select_rows = rows
 
     # Make background functions (just for ease later)
     def show_background_image(background): game_window.blit(background, (0,0))
@@ -51,7 +52,7 @@ def run(level, window_size):
 
         # Must be at start
         offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
-        mouse_extras.update(game_scale)
+        mouse_extras.update(game_scale, playing_grid, offset)
 
         # Clear window
         show_background(background)
@@ -60,7 +61,7 @@ def run(level, window_size):
         dt = clock.tick() / 1000
 
         # Update towers
-        tower_handler.tower_selection(window, game_scale, game_grid)
+        tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows)
 
         # Must be at end
         window.fill((30, 30, 30))

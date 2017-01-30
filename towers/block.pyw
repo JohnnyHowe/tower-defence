@@ -19,7 +19,7 @@ class Tower:
     def show(self, window, window_scale):
 
         # Scale image
-        t_img = transform.scale(img, (window_scale, window_scale))
+        t_img = transform.scale(img, (int(window_scale), int(window_scale)))
 
         # Work out scaled pos
         pos = list(self.pos)
