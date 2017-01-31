@@ -21,3 +21,27 @@ def touching(rect1, rect2):
 
                     return True
     return False
+
+
+def get_pos_on_path(path, dist):
+
+    if dist + 1 >= len(path):
+        return False
+
+    last_full = path[int(dist)]
+    next_full = path[int(dist) + 1]
+
+    xc = next_full[0] - last_full[0]
+    yc = next_full[1] - last_full[1]
+
+    pc = dist - int(dist)
+
+    xd = xc * pc
+    yd = yc * pc
+
+    pos = list(last_full)
+
+    pos[0] += xd
+    pos[1] += yd
+
+    return pos

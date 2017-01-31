@@ -42,7 +42,7 @@ def update_pos(window_scale, game_grid, offset):
     pos[1] = max(min(pos[1], game_grid[1] - 1), 0)
 
     global rounded_pos
-    rounded_pos = pos
+    rounded_pos = list(pos)
 
 def get_pos():
     global rounded_pos

@@ -1,5 +1,5 @@
 from pygame import *
-import pickle, math, mouse_extras, tower_manager
+import pickle, math, mouse_extras, tower_manager, enemy_manager
 import global_functions as gfunc
 
 def run(level, window_size):
@@ -19,6 +19,7 @@ def run(level, window_size):
 
     # Start up handlers
     tower_handler = tower_manager.Tower_Handler()
+    enemy_handler = enemy_manager.Enemy_Handler()
 
     # Work out tower selection size
     num = len(tower_handler.usable_towers)
@@ -62,6 +63,9 @@ def run(level, window_size):
 
         # Update towers
         tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows)
+
+        # Update path
+        enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
 
         # Must be at end
         window.fill((30, 30, 30))

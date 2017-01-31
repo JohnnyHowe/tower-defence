@@ -12,6 +12,7 @@ class Tower_Handler:
     def __init__(self):
         self.usable_towers = [block]
         self.towers = []
+        self.blocks = []
 
 
     def update_towers(self, window, window_scale, playing_grid, dt):
@@ -99,6 +100,10 @@ class Tower_Handler:
                         # Place the tower
                         tower = self.held_tower.Tower(pos)
                         self.towers.append(tower)
+
+                        # Is it a block
+                        if tower.id == 'block':
+                            self.blocks.append(tower)
 
                         # Should the tower still be held on to?
                         if not key.get_pressed()[K_LSHIFT]:
