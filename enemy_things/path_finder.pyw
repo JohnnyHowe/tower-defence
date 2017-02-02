@@ -27,8 +27,11 @@ def get_path(blocks, grid_size):
 
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-
     while True:
+
+        if len(candidates) == 0:
+            return False
+
         current = candidates.pop(0)
 
         for opt in directions:

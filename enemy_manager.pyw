@@ -16,7 +16,9 @@ class Enemy_Handler:
 
     def update_path(self, window, window_scale, grid_size, blocks, dt):
         self.get_path(blocks, grid_size)
-        self.show_path(window, window_scale, dt)
+
+        if self.path:
+            self.show_path(window, window_scale, dt)
 
     lines = None
     old_path = None
@@ -37,8 +39,6 @@ class Enemy_Handler:
                 for index in range(len(self.old_path)):
                     if self.old_path[index] != self.path[index]:
                         break
-
-                print(index, len(self.lines))
 
                 lines = self.lines[:index - 1]
 

@@ -58,6 +58,34 @@ class Tower_Handler:
             # Show
             window.blit(img, (x,y))
 
+        # Delete tower
+        if not self.held_tower:
+
+            if mouse_extras.get_states()[2] == -1:
+
+                mouse_pos = mouse_extras.get_pos()
+
+                # What tower is the mouse over?
+                for tower_index in range(len(self.towers)):
+                    tower = self.towers[tower_index]
+
+                    if tower.pos == mouse_pos:
+                        self.towers.pop(tower_index)
+
+                        if tower.id == 'block':
+                            # Find block
+
+                            for block_index in range(len(self.blocks)):
+
+                                block = self.blocks[block_index]
+
+                                if block.pos == mouse_pos:
+                                    self.blocks.pop(block_index)
+
+                                    break
+                        break
+
+
         # Show placed towers
         for tower in self.towers:
             tower.show(window, window_scale)
