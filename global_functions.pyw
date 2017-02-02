@@ -45,3 +45,52 @@ def get_pos_on_path(path, dist):
     pos[1] += yd
 
     return pos
+
+
+font.init()
+default_font = font.SysFont(None, 100) # Used to find the real font (to work out scale)
+def show_message(text, window, colour = (70, 70, 70), size = None, pos = 'mid', boarder = 0.2):
+
+    window_rect = window.get_rect()
+    max_width = window_rect.width
+    max_height = window_rect.height
+
+    if not size:
+
+        # Working out scale
+        message = default_font.render(text, 0, (0, 0, 0))
+        mes_rect = message.get_rect()
+        mes_rect.height += boarder * 100
+        mes_rect.width += boarder * 100
+
+        scale = min(max_width / mes_rect.width, max_height / mes_rect.height)
+        size = int(scale * 100)
+
+    # Make message
+    use_font = font.SysFont(None, int(size))
+    message = use_font.render(text, 0, colour)
+
+    # Center message
+    rect = message.get_rect()
+
+    if type(pos) == tuple or type(pos) == list:
+
+        pos = list(pos)
+
+        if pos[0] == 'mid': pos[0] = (max_width - rect.width) / 2
+        elif pos[0] == 'right': pos[0] = max_width - rect.width - boarder * size / 2
+        elif pos[0] == 'left': pos[0] = (max_height - rect.height) / 2
+
+        if pos[1] == 'mid': pos[1] = (max_height - rect.height) / 2
+        elif pos[1] == 'top': pos[1] = boarder * size / 2
+        elif pos[1] == 'low': pos[1] = max_height - rect.height - boarder * size / 2
+
+    elif pos == 'left': pos = boarder * size / 2, (max_height - rect.height) / 2
+    elif pos == 'right': pos = max_width - rect.width - boarder * size / 2, (max_height - rect.height) / 2
+    else: pos = (max_width - rect.width) / 2, (max_height - rect.height) / 2
+
+    window.blit(message, pos)
+
+
+
+

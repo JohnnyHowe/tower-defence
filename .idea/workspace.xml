@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7306a52e-f775-474b-ac78-493889203a0f" name="Default" comment="Block tower added">
+    <list default="true" id="7306a52e-f775-474b-ac78-493889203a0f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/levels.dat" afterPath="$PROJECT_DIR$/levels.dat" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/enemy_manager.pyw" afterPath="$PROJECT_DIR$/enemy_manager.pyw" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/enemy_things/path_finder.pyw" afterPath="$PROJECT_DIR$/enemy_things/path_finder.pyw" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tower_manager.pyw" afterPath="$PROJECT_DIR$/tower_manager.pyw" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game.pyw" afterPath="$PROJECT_DIR$/game.pyw" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/global_functions.pyw" afterPath="$PROJECT_DIR$/global_functions.pyw" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/levels.txt" afterPath="$PROJECT_DIR$/levels.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,11 +26,21 @@
             <file leaf-file-name="game.pyw" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/game.pyw">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="540">
-                    <caret line="41" column="89" lean-forward="false" selection-start-line="41" selection-start-column="89" selection-end-line="41" selection-end-column="89" />
+                  <state relative-caret-position="480">
+                    <caret line="85" column="26" lean-forward="false" selection-start-line="85" selection-start-column="26" selection-end-line="85" selection-end-column="26" />
                     <folding>
                       <element signature="e#0#20#0" expanded="true" />
                     </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="global_functions.pyw" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/global_functions.pyw">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="160">
+                    <caret line="67" column="0" lean-forward="true" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -102,10 +113,10 @@
         <option value="$PROJECT_DIR$/run_game.pyw" />
         <option value="$PROJECT_DIR$/towers/block.pyw" />
         <option value="$PROJECT_DIR$/mouse_extras.pyw" />
-        <option value="$PROJECT_DIR$/global_functions.pyw" />
         <option value="$PROJECT_DIR$/tower_manager.pyw" />
         <option value="$PROJECT_DIR$/enemy_manager.pyw" />
         <option value="$PROJECT_DIR$/enemy_things/path_finder.pyw" />
+        <option value="$PROJECT_DIR$/global_functions.pyw" />
         <option value="$PROJECT_DIR$/game.pyw" />
       </list>
     </option>
@@ -386,7 +397,14 @@
       <option name="project" value="LOCAL" />
       <updated>1485820291836</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="+ Program does not break when no valid path is found">
+      <created>1486005770349</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1486005770349</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -448,7 +466,8 @@
     <MESSAGE value="A lil more done" />
     <MESSAGE value="Block tower added" />
     <MESSAGE value="+ Path finder&#10;+ Cool animation to show path" />
-    <option name="LAST_COMMIT_MESSAGE" value="+ Path finder&#10;+ Cool animation to show path" />
+    <MESSAGE value="+ Program does not break when no valid path is found" />
+    <option name="LAST_COMMIT_MESSAGE" value="+ Program does not break when no valid path is found" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -462,7 +481,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="20" />
+      <option name="time" value="26" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -604,13 +623,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/global_functions.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/towers/block.pyw">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -633,14 +645,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tower_manager.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/enemy_things/path_finder.pyw">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -657,10 +661,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tower_manager.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/global_functions.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="67" column="0" lean-forward="true" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/game.pyw">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="41" column="89" lean-forward="false" selection-start-line="41" selection-start-column="89" selection-end-line="41" selection-end-column="89" />
+        <state relative-caret-position="480">
+          <caret line="85" column="26" lean-forward="false" selection-start-line="85" selection-start-column="26" selection-end-line="85" selection-end-column="26" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>
