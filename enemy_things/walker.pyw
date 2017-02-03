@@ -1,5 +1,6 @@
-from data import global_functions as gfunc
 from pygame import *
+import global_functions as gfunc
+import math
 
 class Enemy:
 
@@ -29,17 +30,44 @@ class Enemy:
         self.dist += dt * self.speed
 
     # Change the distance integer to a position on the path
-    def get_pos(self):
-        return gfunc.get_pos_on_path(self.path, self.dist)
+    def get_pos(self, dist = None):
+        if not dist: return gfunc.get_pos_on_path(self.path, self.dist)
+        else: return gfunc.get_pos_on_path(self.path, dist)
 
     # Show the enemy
     def show(self, window, window_scale):
 
         # Get blit pos and scale
-        pos = self.get_pos()
+        current_pos = self.get_pos()
+        pos = list(current_pos)
         pos[0] *= window_scale
         pos[1] *= window_scale
 
         # Scale image to fit the correct amount of space
         img = transform.scale(self.image, (int(window_scale),) * 2)
+        old_rect = img.get_rect()
+
+        # Add the rotation
+        next_dist = self.dist + 0.7
+        next_pos = self.get_pos(dist = next_dist)
+
+        xc = current_pos[0] - next_pos[0]
+        yc = current_pos[1] - next_pos[1]
+
+        rads = math.atan2(-yc, xc)
+        rads %= 2 * math.pi
+
+        img = transform.rotate(img, math.degrees(rads))
+
+        # Add the sway
+        rot = math.sin(self.dist * 4) * 5 # Sin because the curve resembles the wanted swaying motion
+        img = transform.rotate(img, rot)
+
+        rect = img.get_rect()
+        change = (rect.width - old_rect.width) / 2, (rect.height - old_rect.height) / 2
+
+        pos[0] -= change[0]
+        pos[1] -= change[1]
+
+        # Show
         window.blit(img, pos)
