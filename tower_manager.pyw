@@ -20,7 +20,19 @@ class Tower_Handler:
         for tower in self.towers:
             tower.update(window, window_scale, playing_grid, dt)
 
-    
+
+    def draw_selection_block(self, window, window_scale, playing_grid, tower_select_rows):
+        # Draw selecetion block
+        selection_rect = (0, window_scale * playing_grid[1], math.ceil(window_scale * playing_grid[0]), math.ceil(tower_select_rows * window_scale))
+        draw.rect(window, (150, 150, 150), selection_rect)
+        return selection_rect
+
+
+    def clear_towers(self):
+        self.towers = []
+        self.blocks = []
+
+
     held_tower = None
     def tower_selection(self, window, window_scale, playing_grid, tower_select_rows):
 
@@ -34,10 +46,7 @@ class Tower_Handler:
             rect.fill(colour)
             window.blit(rect, pos)
 
-
-        # Draw selecetion block
-        selection_rect = (0, window_scale * playing_grid[1], math.ceil(window_scale * playing_grid[0]), math.ceil(tower_select_rows * window_scale))
-        draw.rect(window, (150, 150, 150), selection_rect)
+        selection_rect = self.draw_selection_block(window, window_scale, playing_grid, tower_select_rows)
 
         # Show towers in selection part
         for tower_i in range(len(self.usable_towers)):

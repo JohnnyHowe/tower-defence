@@ -3,13 +3,69 @@ from enemy_things import path_finder
 import global_functions as gfunc
 
 # Import enemies
-# from enemy_thing import None
-
+from enemy_things import walker
 
 class Enemy_Handler:
 
     def __init__(self):
-        pass
+
+        self.enemies = []
+
+
+    def update_enemies(self, window, window_scale, playing_grid, dt):
+
+        temp = []
+
+        for enemy in self.enemies:
+
+            # Update
+            enemy.update(window, window_scale, dt)
+
+            # Is it still valid?
+            if enemy.get_pos()[0] < playing_grid[0]:
+                temp.append(enemy)
+
+        self.enemies = temp
+
+
+    def set_enemy_path(self):
+
+        # Update the path
+        for enemy in self.enemies:
+            enemy.path = self.path
+
+
+    def load_enemies(self, enemies):
+
+        # Store the objects
+        self.enemies = []
+
+        # Go over all the groups
+        for enemy_group in enemies:
+
+            # Work it out once and once only fo this group
+            enemy_type = eval(enemy_group[0])
+
+            scale = enemy_group[1]
+            speed = enemy_group[2]
+
+            # Make the specified amount
+            for enemy_index in range(enemy_group[3]):
+
+                time_until_spawn = enemy_group[4] + enemy_index * enemy_group[5]
+
+                try:
+                    # Make enemy string eg. 'walker' into the enemy object (MUST BE IMPORTED!)
+                    obj = enemy_type.Enemy(scale, speed, time_until_spawn)
+                    self.enemies.append(obj)
+
+                except Exception as error:
+
+                    print(error)
+                    print('''
+Cannot make the enemy into an object!
+Check that the enemy file is imported into the 'enemy_manager.pyw' file''')
+
 
     blocks = []     # Keep track of the blocks on the grid to avoid updating the path when it doesn't need to
     path = None

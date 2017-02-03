@@ -2,8 +2,12 @@
 
 1: {
 	'enemies':[
-		('walker', 10, 0.5, 2)
+	
+		# ('Name', scale, speed, amount, Time until first spawn, Time between spawns)
+		
+		('walker', 1, 5, 1, 1, 0.5)
 		],
+		
 	'start_money': 1000,
 	'grid_size': (16, 7),
 	'background': (230, 230, 230),
