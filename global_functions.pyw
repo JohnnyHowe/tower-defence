@@ -1,4 +1,37 @@
 from pygame import *
+import math
+
+def slope(angle):
+
+    while angle > 360: angle -= 360
+    while angle < 0: angle += 360
+
+    if angle > 270: c = 3; angle -= 270
+    elif angle > 180: c = 2; angle -= 180
+    elif angle > 90: c = 1; angle -= 90
+    else: c = 0
+
+    x = angle / 90
+    y = 1 - x
+
+    if c == 1: y, x = -x, y
+    if c == 2: x = -x; y = -y
+    if c == 3: y, x = x, -y
+
+    return x, y
+
+
+def get_rot(p1, p2):
+
+    xc = p1[0] - p2[0]
+    yc = p1[1] - p2[1]
+
+    rads = math.atan2(-yc, xc)
+    rads %= 2 * math.pi
+
+    degs = math.degrees(rads) - 90
+    return degs
+
 
 def event_loop():
     for e in event.get():

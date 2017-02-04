@@ -4,15 +4,24 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block
+from towers import block, machine_gun
 
 
 class Tower_Handler:
 
     def __init__(self):
-        self.usable_towers = [block]
+        self.usable_towers = [block, machine_gun]
         self.towers = []
         self.blocks = []
+
+
+    def do_damage(self, enemies):
+
+        # Cycle through all the towers and to damage
+        for tower in self.towers:
+            enemies = tower.do_damage(enemies)
+
+        return enemies
 
 
     def update_towers(self, window, window_scale, playing_grid, dt):
@@ -118,14 +127,35 @@ class Tower_Handler:
                 self.held_tower = None
                 return
 
+            # Does it need to be placed?
             pos = mouse_extras.get_pos()
             if pos[1] < playing_grid[1]:
 
-                # Check if a tower is in the way
-                okay = True
+                # Check that the necessary base(s) are there
+                towers_in_slot = []
                 for tower in self.towers:
                     if tower.pos == pos:
+                        towers_in_slot.append(tower)
+
+                held_layer = self.held_tower.layer
+                okay = True
+
+                # Check that there are no towers in the same slot and layer
+                for tower in towers_in_slot:
+                    if tower.layer == held_layer:
                         okay = False
+
+                for height in range(held_layer):
+
+                    base = False
+                    for tower in towers_in_slot:
+                        if tower.layer == height:
+                            base = True
+                            break
+
+                    if not base:
+                        okay = False
+
 
                 if okay:
                     draw_rect((100, 255, 100))
@@ -154,6 +184,7 @@ class Tower_Handler:
                 draw_rect((255, 100, 100))
                 show_tower()
 
+        # Does a tower need to be picked up?
         else:
 
             mouse_states = mouse_extras.get_states()

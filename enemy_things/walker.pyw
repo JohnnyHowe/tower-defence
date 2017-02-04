@@ -34,6 +34,10 @@ class Enemy:
         if not dist: return gfunc.get_pos_on_path(self.path, self.dist)
         else: return gfunc.get_pos_on_path(self.path, dist)
 
+    def get_rect(self, window_scale):
+        pos = self.get_pos()
+        return [pos[0] * window_scale, pos[1] * window_scale, window_scale, window_scale]
+
     # Show the enemy
     def show(self, window, window_scale):
 
@@ -51,13 +55,8 @@ class Enemy:
         next_dist = self.dist + 0.7
         next_pos = self.get_pos(dist = next_dist)
 
-        xc = current_pos[0] - next_pos[0]
-        yc = current_pos[1] - next_pos[1]
-
-        rads = math.atan2(-yc, xc)
-        rads %= 2 * math.pi
-
-        img = transform.rotate(img, math.degrees(rads))
+        angle = gfunc.get_rot(next_pos, current_pos) - 90
+        img = transform.rotate(img, angle)
 
         # Add the sway
         rot = math.sin(self.dist * 4) * 5 # Sin because the curve resembles the wanted swaying motion

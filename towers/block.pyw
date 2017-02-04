@@ -1,15 +1,24 @@
 from pygame import *
 img = image.load('images//towers//block.png')
+layer = 0
 
 class Tower:
 
     def __init__(self, pos):
+
+        self.layer = layer
 
         self.pos = pos
         self.cost = 20
 
         self.id = 'block'
         self.info = 'Base for other towers, can be used to make the enemies path longer'
+
+        self.projectiles = []
+
+
+    def do_damage(self, enemies):
+        return enemies
 
 
     def update(self, window, window_scale, playing_grid, dt):

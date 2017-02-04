@@ -25,6 +25,26 @@ def run(level, window_size):
     tower_handler = tower_manager.Tower_Handler()
     enemy_handler = enemy_manager.Enemy_Handler()
 
+    # Fancy hitbox things
+    def show_dev_things():
+
+        if key.get_pressed()[K_F2]:
+
+            # Enemies
+            for enemy in enemy_handler.enemies:
+                rect = enemy.get_rect(game_scale)
+                draw.rect(game_window, (255, 100, 100), rect, 2)
+
+            # Towers
+            for tower in tower_handler.towers:
+                draw.rect(game_window, (100, 255, 100), (tower.pos[0] * game_scale, tower.pos[1] * game_scale, game_scale, game_scale), 2)
+
+                # Projectiles
+                for obj in tower.projectiles:
+                    draw.rect(game_window, (100, 100, 255), obj.get_rect(game_scale), 2)
+
+
+
     # Work out tower selection size
     num = len(tower_handler.usable_towers)
     rows = math.ceil(num / game_grid[0])
@@ -139,6 +159,12 @@ def run(level, window_size):
 
             # Update enemies
             enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
+
+            # Do the damage
+            enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies)
+
+            # Fancy
+            show_dev_things()
 
             # Must be at end
             window.fill((30, 30, 30))
