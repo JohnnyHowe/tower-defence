@@ -28,7 +28,7 @@ def run(level, window_size):
     # Fancy hitbox things
     def show_dev_things():
 
-        if key.get_pressed()[K_F2]:
+        if not key.get_pressed()[K_F2]:
 
             # Enemies
             for enemy in enemy_handler.enemies:

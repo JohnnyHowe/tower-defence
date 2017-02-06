@@ -14,7 +14,7 @@ class Bullet:
         self.angle = self.get_angle()
         self.speed = speed
 
-        self.height = 0.7 # Multiplied by the window scale
+        self.height = 0.3 # Multiplied by the window scale
 
     def update(self, window, window_scale, dt):
         self.move(dt)
@@ -33,7 +33,13 @@ class Bullet:
 
 
     def get_rect(self, window_scale):
-        img = transform.scale(bullet_img, (int(self.height * window_scale),) * 2)
+        img_rect = bullet_img.get_rect()
+        scale = self.height * window_scale / min(img_rect.width, img_rect.height)
+
+        width = img_rect.width * scale
+        height = img_rect.height * scale
+
+        img = transform.scale(bullet_img, (int(width), int(height)))
         img = transform.rotate(img, self.angle)
 
         rect_obj = img.get_rect()
@@ -43,7 +49,13 @@ class Bullet:
 
 
     def show(self, window, window_scale):
-        img = transform.scale(bullet_img, (int(window_scale),) * 2)
+        img_rect = bullet_img.get_rect()
+        scale = self.height * window_scale / min(img_rect.width, img_rect.height)
+
+        width = img_rect.width * scale
+        height = img_rect.height * scale
+
+        img = transform.scale(bullet_img, (int(width), int(height)))
         img = transform.rotate(img, self.angle)
 
         rect = self.get_rect(window_scale)
@@ -79,7 +91,12 @@ class Tower:
             self.last_shot -= 1
 
             if self.rot:
-                self.projectiles.append(Bullet(self.pos, gfunc.slope(self.rot - 180)))
+
+                pos = list(self.pos)
+                pos[0] += 0.5
+                pos[1] += 0.5
+
+                self.projectiles.append(Bullet(pos, gfunc.slope(self.rot - 180)))
 
 
     def update_bullets(self, window, window_scale, dt):
