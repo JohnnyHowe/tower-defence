@@ -11,6 +11,9 @@ class Enemy:
         self.speed = speed
         self.scale = scale
 
+        self.max_health = 10
+        self.health = self.max_health
+
         # Negative distance will be treated as the time left until the enemy will spawn
         self.dist = -time_until_spawn
 
@@ -20,6 +23,24 @@ class Enemy:
     def update(self, window, window_scale, dt):
         self.move(dt)
         self.show(window, window_scale)
+        self.show_health(window, window_scale)
+
+
+    def show_health(self, window, window_scale):
+
+        height = max(1, 0.1 * window_scale)
+        width = 0.8 * window_scale
+
+        rect = self.get_rect(window_scale)
+        health_per = max(0, self.health / self.max_health)
+
+        x = rect[0] + rect[2] / 2 - width / 2
+        y = max(0, rect[1] - window_scale * 0.1)
+
+        draw.rect(window, (200, 100, 100), (x, y, width, height))
+
+        if health_per > 0: draw.rect(window, (100, 200, 100), (x, y, width * health_per, height))
+
 
     # This will allow the init function to be called before the fight stage so all the images can be loaded in at the start
     def set(self, path):

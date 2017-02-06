@@ -15,11 +15,11 @@ class Tower_Handler:
         self.blocks = []
 
 
-    def do_damage(self, enemies):
+    def do_damage(self, enemies, window_scale):
 
         # Cycle through all the towers and to damage
         for tower in self.towers:
-            enemies = tower.do_damage(enemies)
+            enemies = tower.do_damage(enemies, window_scale)
 
         return enemies
 
@@ -44,6 +44,8 @@ class Tower_Handler:
 
     held_tower = None
     def tower_selection(self, window, window_scale, playing_grid, tower_select_rows):
+
+        k = key.get_pressed()
 
         def draw_rect(colour):
             pos = mouse_extras.get_pos()
@@ -77,31 +79,37 @@ class Tower_Handler:
             window.blit(img, (x,y))
 
         # Delete tower
-        if not self.held_tower:
+        if not self.held_tower or k[K_LSHIFT]:
 
             if mouse_extras.get_states()[2] == -1:
-
                 mouse_pos = mouse_extras.get_pos()
 
-                # What tower is the mouse over?
+                # What tower(s) are the mouse over?
+                highest = 0
+                del_tower_index = None
+
                 for tower_index in range(len(self.towers)):
                     tower = self.towers[tower_index]
 
+                    # Is it in the right pos?
                     if tower.pos == mouse_pos:
-                        self.towers.pop(tower_index)
 
-                        if tower.id == 'block':
-                            # Find block
+                        # Is it above the others?
+                        if tower.layer >= highest:
 
-                            for block_index in range(len(self.blocks)):
+                            highest = tower.layer
+                            del_tower_index = tower_index
 
-                                block = self.blocks[block_index]
+                # Is there one to delete?
+                if del_tower_index != None:
 
-                                if block.pos == mouse_pos:
-                                    self.blocks.pop(block_index)
+                    # Is it a block?
+                    if self.towers[del_tower_index].id == 'block':
+                        index = self.blocks.index(self.towers[del_tower_index])
+                        self.blocks.pop(index)
 
-                                    break
-                        break
+                    self.towers.pop(del_tower_index)
+
 
 
         # Show placed towers
@@ -123,7 +131,7 @@ class Tower_Handler:
             # Is it in the playing area
 
             # Does the held tower need to be let go?
-            if mouse_extras.get_states()[2] == -1:
+            if mouse_extras.get_states()[2] == -1 and not k[K_LSHIFT]:
                 self.held_tower = None
                 return
 

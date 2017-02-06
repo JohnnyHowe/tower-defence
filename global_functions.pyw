@@ -33,6 +33,13 @@ def get_rot(p1, p2):
     return degs
 
 
+def tuple_mult(tup, multiplier):
+    tup = list(tup)
+    for value_i in range(len(tup)):
+        tup[value_i] *= multiplier
+    return tuple(tup)
+
+
 def event_loop():
     for e in event.get():
         if e.type == QUIT:

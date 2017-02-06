@@ -13,6 +13,7 @@ class Bullet:
         self.slope = slope
         self.angle = self.get_angle()
         self.speed = speed
+        self.damage = 0.5
 
         self.height = 0.3 # Multiplied by the window scale
 
@@ -30,6 +31,16 @@ class Bullet:
         p1 = self.pos
         p2 = self.pos[0] + self.slope[0], self.pos[1] + self.slope[1]
         return gfunc.get_rot(p1, p2)
+
+
+    def on_screen(self, window_scale, game_grid):
+
+        rect = self.get_rect(window_scale)
+        scaled_grid = (0, 0) + gfunc.tuple_mult(game_grid, window_scale)
+
+        if gfunc.touching(rect, scaled_grid):
+            return True
+        return False
 
 
     def get_rect(self, window_scale):
@@ -99,33 +110,54 @@ class Tower:
                 self.projectiles.append(Bullet(pos, gfunc.slope(self.rot - 180)))
 
 
-    def update_bullets(self, window, window_scale, dt):
+    def update_bullets(self, window, window_scale, game_grid, dt):
 
+        temp = []
         for bullet in self.projectiles:
             bullet.update(window, window_scale, dt)
 
+            if bullet.on_screen(window_scale, game_grid):
+                temp.append(bullet)
 
-    def do_damage(self, enemies):
+        self.projectiles = list(temp)
+
+
+    def do_damage(self, enemies, window_scale):
         self.aim(enemies)
-        # Do damage here
+
+        for enemy in enemies:
+            enemy_rect = enemy.get_rect(window_scale)
+
+            for bullet in self.projectiles:
+                bullet_rect = bullet.get_rect(window_scale)
+
+                if gfunc.touching(bullet_rect, enemy_rect):
+
+                    enemy.health -= bullet.damage
+                    bullet_index = self.projectiles.index(bullet)
+                    self.projectiles.pop(bullet_index)
+
 
         return enemies
 
 
     def update(self, window, window_scale, playing_grid, dt):
         self.shoot(dt)
-        self.update_bullets(window, window_scale, dt)
+        self.update_bullets(window, window_scale, playing_grid, dt)
         self.show(window, window_scale)
 
 
     def aim(self, enemies):
-
         if len(enemies) > 0:
 
             # Aim at first
             enemy = enemies[0]
-            self.rot = gfunc.get_rot(enemy.get_pos(), self.pos)
 
+            pos = enemy.get_pos()
+            pos[0] += 0.5
+            pos[1] += 0.5
+
+            self.rot = gfunc.get_rot(pos, self.pos)
         else: self.rot = None
 
 

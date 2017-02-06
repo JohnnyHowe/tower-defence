@@ -17,7 +17,7 @@ class Tower:
         self.projectiles = []
 
 
-    def do_damage(self, enemies):
+    def do_damage(self, enemies, *args):
         return enemies
 
 
@@ -38,6 +38,3 @@ class Tower:
         # Show
         window.blit(t_img, pos)
 
-
-    def do_damage(self, enemies):
-        return enemies

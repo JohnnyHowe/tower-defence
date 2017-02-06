@@ -161,7 +161,7 @@ def run(level, window_size):
             enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
 
             # Do the damage
-            enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies)
+            enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
 
             # Fancy
             show_dev_things()
