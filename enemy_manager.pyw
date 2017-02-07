@@ -8,21 +8,24 @@ from enemy_things import walker
 class Enemy_Handler:
 
     def __init__(self):
-
         self.enemies = []
 
 
     def update_enemies(self, window, window_scale, playing_grid, dt):
 
         temp = []
-
         for enemy in self.enemies:
 
             # Update
             enemy.update(window, window_scale, dt)
 
             # Is it still valid?
-            if enemy.get_pos()[0] < playing_grid[0]:
+            pos = enemy.get_pos()
+
+            if pos:
+                if pos[0] < playing_grid[0] and not enemy.dead:
+                    temp.append(enemy)
+            else:
                 temp.append(enemy)
 
         self.enemies = temp
