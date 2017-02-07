@@ -8,12 +8,12 @@ bullet_img = image.load('images\\towers\\bullet.png')
 
 class Bullet:
 
-    def __init__(self, pos, slope, speed = 70):
+    def __init__(self, pos, slope, speed = 30):
         self.pos = list(pos)
         self.slope = slope
         self.angle = self.get_angle()
         self.speed = speed
-        self.damage = 0.3
+        self.damage = 0.5
 
         self.height = 0.3 # Multiplied by the window scale
 
@@ -95,12 +95,11 @@ class Tower:
 
     last_shot = 0
     def shoot(self, dt):
-        time = 1.0
 
         self.last_shot += dt * 10
 
-        if self.last_shot >= time:
-            self.last_shot -= time
+        if self.last_shot >= 1:
+            self.last_shot -= 1
 
             if self.rot:
 
@@ -129,16 +128,14 @@ class Tower:
         for enemy in enemies:
             enemy_rect = enemy.get_rect(window_scale)
 
-            if enemy_rect:
+            for bullet in self.projectiles:
+                bullet_rect = bullet.get_rect(window_scale)
 
-                for bullet in self.projectiles:
-                    bullet_rect = bullet.get_rect(window_scale)
+                if gfunc.touching(bullet_rect, enemy_rect):
 
-                    if gfunc.touching(bullet_rect, enemy_rect):
-
-                        enemy.health -= bullet.damage
-                        bullet_index = self.projectiles.index(bullet)
-                        self.projectiles.pop(bullet_index)
+                    enemy.health -= bullet.damage
+                    bullet_index = self.projectiles.index(bullet)
+                    self.projectiles.pop(bullet_index)
 
 
         return enemies
@@ -157,20 +154,10 @@ class Tower:
             enemy = enemies[0]
 
             pos = enemy.get_pos()
+            pos[0] += 0.5
+            pos[1] += 0.5
 
-            if pos:
-
-                pos[0] += 0.5
-                pos[1] += 0.5
-
-                this_pos = list(self.pos)
-                this_pos[0] += 0.5
-                this_pos[1] += 0.5
-
-                self.rot = gfunc.get_rot(pos, this_pos)
-            else:
-                self.rot = None
-
+            self.rot = gfunc.get_rot(pos, self.pos)
         else: self.rot = None
 
 

@@ -28,14 +28,12 @@ def run(level, window_size):
     # Fancy hitbox things
     def show_dev_things():
 
-        if key.get_pressed()[K_F2]:
+        if not key.get_pressed()[K_F2]:
 
             # Enemies
             for enemy in enemy_handler.enemies:
                 rect = enemy.get_rect(game_scale)
-
-                if rect:
-                    draw.rect(game_window, (255, 100, 100), rect, 2)
+                draw.rect(game_window, (255, 100, 100), rect, 2)
 
             # Towers
             for tower in tower_handler.towers:
