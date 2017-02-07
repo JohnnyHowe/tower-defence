@@ -43,6 +43,8 @@ class Enemy_Handler:
         # Store the objects
         self.enemies = []
 
+        start_time = 0
+
         # Go over all the groups
         for enemy_group in enemies:
 
@@ -54,8 +56,7 @@ class Enemy_Handler:
 
             # Make the specified amount
             for enemy_index in range(enemy_group[3]):
-
-                time_until_spawn = enemy_group[4] + enemy_index * enemy_group[5]
+                time_until_spawn = enemy_group[4] + enemy_index * enemy_group[5] + start_time
 
                 try:
                     # Make enemy string eg. 'walker' into the enemy object (MUST BE IMPORTED!)
@@ -68,6 +69,9 @@ class Enemy_Handler:
                     print('''
 Cannot make the enemy into an object!
 Check that the enemy file is imported into the 'enemy_manager.pyw' file''')
+
+            start_time += enemy_group[3] * enemy_group[5] + enemy_group[4]
+            #print(start_time)
 
 
     blocks = []     # Keep track of the blocks on the grid to avoid updating the path when it doesn't need to

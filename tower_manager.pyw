@@ -81,7 +81,7 @@ class Tower_Handler:
         # Delete tower
         if not self.held_tower or k[K_LSHIFT]:
 
-            if mouse_extras.get_states()[2] == -1:
+            if mouse_extras.get_states()[2] == -1 or (mouse.get_pressed()[2] and k[K_LCTRL]):
                 mouse_pos = mouse_extras.get_pos()
 
                 # What tower(s) are the mouse over?
@@ -170,7 +170,7 @@ class Tower_Handler:
                     show_tower()
 
                     # Does the held tower need to be placed?
-                    if mouse_extras.get_states()[0] == -1:
+                    if mouse_extras.get_states()[0] == -1 or (mouse.get_pressed()[0] and k[K_LCTRL]):
 
                         # Place the tower
                         tower = self.held_tower.Tower(pos)
