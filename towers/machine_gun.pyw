@@ -8,7 +8,7 @@ bullet_img = image.load('images\\towers\\bullet.png')
 
 class Bullet:
 
-    def __init__(self, pos, slope, speed = 70):
+    def __init__(self, pos, slope, speed = 50):
         self.pos = list(pos)
         self.slope = slope
         self.angle = self.get_angle()
@@ -93,6 +93,8 @@ class Tower:
         self.rot = None
         self.projectiles = []
 
+        self.aiming = False
+
     last_shot = 0
     def shoot(self, dt):
         time = 1.0
@@ -102,7 +104,7 @@ class Tower:
         if self.last_shot >= time:
             self.last_shot -= time
 
-            if self.rot:
+            if self.rot and self.aiming:
 
                 pos = list(self.pos)
                 pos[0] += 0.5
@@ -173,10 +175,9 @@ class Tower:
                 this_pos[1] += 0.5
 
                 self.rot = gfunc.get_rot(pos, this_pos)
-            else:
-                self.rot = None
-
-        else: self.rot = None
+                self.aiming = True
+                return
+        self.aiming = False
 
 
     def show(self, window, window_scale):

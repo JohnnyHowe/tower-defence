@@ -1,5 +1,6 @@
 from pygame import *
 import math
+import mouse_extras
 
 def slope(angle):
 
@@ -50,6 +51,61 @@ def event_loop():
 
         if e.type == VIDEORESIZE:
             return e.w, e.h
+
+
+def text_button(window, window_size, window_offset, text, text_colour, rect, margin = 0.02, background_rect = None):
+    base_font = font.SysFont(None, 100)
+
+    # Text will be centered in the rect
+
+    # Show button
+    # Draw rect
+    if background_rect:
+
+        # Using this instead of draw.rect() so alpha values will work
+        surf = Surface((rect[2:]))
+        surf.fill(background_rect)
+
+        # Add alpha
+        if len(background_rect) == 4: surf.set_alpha(background_rect[3])
+        window.blit(surf, rect[:2])
+
+
+    mess_surf = base_font.render(text, 0, text_colour)
+    mes_rect = mess_surf.get_rect()
+
+    x_scale = rect[2] / mes_rect.width
+    y_scale = rect[3] / mes_rect.height
+
+    scale = min(x_scale, y_scale)
+
+    new_font = font.SysFont(None, int(scale * 100))
+    new_mes_surf = new_font.render(text, 0, text_colour)
+    new_mes_rect = new_mes_surf.get_rect()
+
+    if len(text_colour) == 4: new_mes_surf.set_alpha(text_colour[3])
+
+    x = (rect[2] - new_mes_rect.width) / 2 + rect[0]
+    y = (rect[3] - new_mes_rect.height) / 2 + rect[1]
+
+    new_mes_rect_list = [x, y, new_mes_rect.width, new_mes_rect.height]
+    window.blit(new_mes_surf, (x, y))
+
+
+    # Is the button clicked?
+    states = mouse_extras.get_states()
+
+    mouse_pos = mouse.get_pos()
+    mouse_rect = [mouse_pos[0] - window_offset[0], mouse_pos[1] - window_offset[1], 0, 0]
+
+    if key.get_pressed()[K_F2]:
+        draw.rect(window, (200, 200, 0), new_mes_rect_list, 2)
+        draw.rect(window, (0, 0, 0), mouse_rect, 20)
+
+    if touching(new_mes_rect_list, mouse_rect):
+        if mouse_extras.get_states()[0] == -1:
+            return True
+
 
 
 def touching(rect1, rect2):

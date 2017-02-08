@@ -67,6 +67,8 @@ def run(level, window_size):
         game_window = Surface(game_size)
         offset = (window_size[0] - game_size[0]) / 2, math.ceil((window_size[1] - game_size[1] + scale) / 2)
 
+        if new: clock.tick()
+
         if new: window_size = new; window = display.set_mode(window_size, RESIZABLE)
         return offset, window, window_size, game_window, game_size, scale
 
@@ -84,6 +86,7 @@ def run(level, window_size):
     while True:
 
         # Set up loop (game)
+        enemy_handler.load_enemies(level_info['enemies'])
         while True:
 
             # Must be at start
@@ -162,6 +165,11 @@ def run(level, window_size):
 
             # Update enemies
             if enemy_handler.update_enemies(game_window, game_scale, game_grid, dt):
+                state = 0
+                break
+
+            if enemy_handler.enemies == []:
+                state = 1
                 break
 
             # Do the damage
@@ -214,7 +222,7 @@ def run(level, window_size):
             enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
 
             # Show death window
-            death_window(game_window, game_scale, game_size, (0, window_y))
+            if death_window(game_window, game_size, offset, (0, window_y)): break
 
             # Move death window
             max_height = -game_scale * tower_select_rows / 2
@@ -231,7 +239,7 @@ def run(level, window_size):
 
 
 base_font = font.SysFont(None, 100)
-def death_window(window, window_scale, window_size, offset):
+def death_window(window, window_size, window_offset, offset):
 
     background_colour = (150, 150, 150)
     text_colour = (255, 255, 255)
@@ -246,7 +254,9 @@ def death_window(window, window_scale, window_size, offset):
     window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
     draw.rect(window, background_colour, window_rect)
 
-    header = 'You Failed!'
+
+    # Show header and get scale etc
+    header = 'You Suck!'
 
     max_width = width - margin_x * 2
     max_height = height - margin_y * 2
@@ -265,6 +275,9 @@ def death_window(window, window_scale, window_size, offset):
     window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
 
 
+    # Buttons
+    width, height = 175 * scale, 75 * scale
+    restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
-
+    return restart
 
