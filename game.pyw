@@ -178,6 +178,9 @@ def run(level, window_size):
             # Update towers
             tower_handler.update_towers(game_window, game_scale, game_grid, dt)
 
+            # Message board
+            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.7, boarder = 1)
+
             # Fancy
             show_dev_things()
 
