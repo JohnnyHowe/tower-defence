@@ -135,7 +135,10 @@ def run(level, window_size):
         enemy_handler.set_enemy_path()
 
         # Fight!
-        while True:
+        restart = False
+        tower_handler.reset()
+
+        while not restart:
 
             # Must be at start
             offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
@@ -149,6 +152,7 @@ def run(level, window_size):
             # Do we want to restart the game?
             if key.get_pressed()[K_r]:
                 enemy_handler.load_enemies(level_info['enemies'])
+                restart = True
                 break
 
             tower_handler.draw_selection_block(game_window, game_scale, game_grid, tower_select_rows)
@@ -156,14 +160,15 @@ def run(level, window_size):
             # Do important things
             dt = clock.tick() / 1000
 
-            # Update towers
-            tower_handler.update_towers(game_window, game_scale, game_grid, dt)
-
             # Update enemies
-            enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
+            if enemy_handler.update_enemies(game_window, game_scale, game_grid, dt):
+                break
 
             # Do the damage
             enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
+
+            # Update towers
+            tower_handler.update_towers(game_window, game_scale, game_grid, dt)
 
             # Fancy
             show_dev_things()
@@ -174,3 +179,92 @@ def run(level, window_size):
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
             display.update()
+
+
+        # Death screen
+
+        window_y = window_size[1]
+        while not restart:
+
+            # Must be at start
+            offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
+            mouse_extras.update(game_scale, playing_grid, offset)
+            message_surf = Surface((game_size[0], math.ceil(game_scale)))
+
+             # Clear/set up window(s)
+            show_background(background)
+            message_surf.fill((150, 150, 150))
+
+            # Do we want to restart the game?
+            if key.get_pressed()[K_r]:
+                enemy_handler.load_enemies(level_info['enemies'])
+                restart = True
+                break
+
+            # Show tower selection thing
+            tower_handler.draw_selection_block(game_window, game_scale, game_grid, tower_select_rows)
+
+            # Do important things
+            dt = clock.tick() / 1000
+
+            # Show towers
+            tower_handler.show_towers(game_window, game_scale)
+
+            # Update enemies
+            enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
+
+            # Show death window
+            death_window(game_window, game_scale, game_size, (0, window_y))
+
+            # Move death window
+            max_height = -game_scale * tower_select_rows / 2
+            window_y -= dt * max((window_y - max_height) * 10, 1)
+
+            window_y = max(window_y, max_height)
+
+            # Must be at end
+            window.fill((30, 30, 30))
+            window.blit(game_window, offset)
+            window.blit(message_surf, (offset[0], offset[1] - game_scale))
+
+            display.update()
+
+
+base_font = font.SysFont(None, 100)
+def death_window(window, window_scale, window_size, offset):
+
+    background_colour = (150, 150, 150)
+    text_colour = (255, 255, 255)
+
+    scale = min(window_size)
+    margin_x = scale / 8
+    margin_y = scale / 15
+
+    width = scale / 16 * 16
+    height = scale / 16 * 9
+
+    window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
+    draw.rect(window, background_colour, window_rect)
+
+    header = 'You Failed!'
+
+    max_width = width - margin_x * 2
+    max_height = height - margin_y * 2
+
+    test = base_font.render(header, 0, (0, 0, 0))
+    test_rect = test.get_rect()
+
+    width_scale = max_width / test_rect.width
+    height_scale = max_height / test_rect.height
+
+    scale = min(width_scale, height_scale)
+
+    new_font = font.SysFont(None, int(100 * scale))
+    header_message = new_font.render(header, 0, text_colour)
+
+    window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
+
+
+
+
+

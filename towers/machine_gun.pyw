@@ -123,6 +123,11 @@ class Tower:
         self.projectiles = list(temp)
 
 
+    def reset(self):
+        self.projectiles = []
+        self.rot = 0
+
+
     def do_damage(self, enemies, window_scale):
         self.aim(enemies)
 

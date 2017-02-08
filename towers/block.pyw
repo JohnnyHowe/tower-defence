@@ -17,6 +17,10 @@ class Tower:
         self.projectiles = []
 
 
+    def reset(self):
+        pass
+
+
     def do_damage(self, enemies, *args):
         return enemies
 

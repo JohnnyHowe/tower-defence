@@ -19,9 +19,18 @@ def update_states():
         old_state = [0,0,0]
 
 
+def update_buttons():
+    global buttons
+    buttons = mouse.get_pressed()
+
 def update(window_scale, game_grid, offset):
     update_states()
     update_pos(window_scale, game_grid, offset)
+    update_buttons()
+
+def get_pressed():
+    global buttons
+    return(list(buttons))
 
 def get_states():
     global states

@@ -24,6 +24,18 @@ class Tower_Handler:
         return enemies
 
 
+    def show_towers(self, window, window_scale):
+
+        for tower in self.towers:
+            tower.show(window, window_scale)
+
+
+    def reset(self):
+
+        for tower in self.towers:
+            tower.reset()
+
+
     def update_towers(self, window, window_scale, playing_grid, dt):
 
         for tower in self.towers:
@@ -81,7 +93,7 @@ class Tower_Handler:
         # Delete tower
         if not self.held_tower or k[K_LSHIFT]:
 
-            if mouse_extras.get_states()[2] == -1 or (mouse.get_pressed()[2] and k[K_LCTRL]):
+            if mouse_extras.get_states()[2] == -1 or (mouse_extras.get_pressed()[2] and k[K_LSHIFT]):
                 mouse_pos = mouse_extras.get_pos()
 
                 # What tower(s) are the mouse over?
@@ -170,7 +182,7 @@ class Tower_Handler:
                     show_tower()
 
                     # Does the held tower need to be placed?
-                    if mouse_extras.get_states()[0] == -1 or (mouse.get_pressed()[0] and k[K_LCTRL]):
+                    if mouse_extras.get_states()[0] == -1 or (mouse_extras.get_pressed()[0] and k[K_LSHIFT]):
 
                         # Place the tower
                         tower = self.held_tower.Tower(pos)

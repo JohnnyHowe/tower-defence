@@ -25,7 +25,6 @@ class Enemy:
     def update(self, window, window_scale, dt):
         self.move(dt)
         self.show(window, window_scale)
-        self.show_health(window, window_scale)
         self.update_death()
 
 
@@ -64,8 +63,9 @@ class Enemy:
     # Change the distance integer to a position on the path
     def get_pos(self, dist = None):
         if not dist:
-            if self.dist > 0: return gfunc.get_pos_on_path(self.path, self.dist)
-            else: return None
+            if self.dist < len(self.path) - 3:
+                if self.dist > 0: return gfunc.get_pos_on_path(self.path, self.dist)
+                else: return None
 
         else: return gfunc.get_pos_on_path(self.path, dist)
 

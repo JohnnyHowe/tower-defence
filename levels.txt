@@ -12,5 +12,18 @@
 	'start_money': 1000,
 	'grid_size': (16, 7),
 	'background': (230, 230, 230),
-	}
+	},
+	
+2: {
+	'enemies':[
+	
+		# ('Name', scale, speed, amount, Time until first spawn, Time between spawns)
+		
+		('walker', 1, 5, 1, 0, 1.5),
+		],
+		
+	'start_money': 1000,
+	'grid_size': (16, 7),
+	'background': (230, 230, 230),
+	},
 }

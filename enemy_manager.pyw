@@ -13,6 +13,8 @@ class Enemy_Handler:
 
     def update_enemies(self, window, window_scale, playing_grid, dt):
 
+        finished = False
+
         temp = []
         for enemy in self.enemies:
 
@@ -23,12 +25,20 @@ class Enemy_Handler:
             pos = enemy.get_pos()
 
             if pos:
-                if pos[0] < playing_grid[0] and not enemy.dead:
-                    temp.append(enemy)
+                if not enemy.dead:
+                    if pos[0] < playing_grid[0]:
+                        temp.append(enemy)
+                    else:
+                        finished = True
             else:
                 temp.append(enemy)
 
+
+        for enemy in self.enemies:
+            enemy.show_health(window, window_scale)
+
         self.enemies = temp
+        return finished
 
 
     def set_enemy_path(self):
@@ -71,7 +81,6 @@ Cannot make the enemy into an object!
 Check that the enemy file is imported into the 'enemy_manager.pyw' file''')
 
             start_time += enemy_group[3] * enemy_group[5] + enemy_group[4]
-            #print(start_time)
 
 
     blocks = []     # Keep track of the blocks on the grid to avoid updating the path when it doesn't need to
