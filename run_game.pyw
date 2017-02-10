@@ -1,5 +1,5 @@
-import game
+import menu
 
 window_size = (600, 400)
 
-game.run(2, window_size)
+menu.run(window_size)
