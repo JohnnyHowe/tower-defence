@@ -1,9 +1,11 @@
 from pygame import *
-import mouse_extras, pickle
+import mouse_extras, pickle, math, game
 import global_functions as gfunc
 
 
 def run(window_size, old_window):
+
+    scroll = 0
 
     offset = [0, window_size[1]]
 
@@ -23,19 +25,49 @@ def run(window_size, old_window):
             return window, window_size, min(window_size)
 
 
+    def level_button(number, window, window_size, window_scale, pos, show = True):
+
+        height = window_scale * 0.15
+        if gfunc.text_button(window, window_size, (0,0), str(number), (255, 255, 255), (pos[0], pos[1], height, height), alignment = 'center'):
+            return True
+
+
     level_info = pickle.load(open('levels.dat', 'rb'))
     levels = len(level_info)
-
-    #x_percent = levels / ()
-
+    max_columns = 5
 
     while True:
 
         screen, window_size, window_scale = resize(screen, window_size)
         window = Surface(window_size)
-        window.fill((130, 130, 130))
-
+        window.fill((140, 140, 140))
         dt = clock.tick() / 1000
+
+        x_dist = window_size[0] / (min(max_columns, levels) + 1)
+        rows = math.ceil(levels / max_columns)
+
+        if rows > 0: y_dist = window_size[1] / (rows + 1)
+        else: y_dist = 0
+
+        y_dist = max(y_dist, window_scale * 0.2)
+
+        # Scroll
+        mouse_pos = mouse.get_pos()
+        s = 200
+        if mouse_pos[1] >= window_size[1] * 0.8:
+            scroll += s * dt
+        if mouse_pos[1] <= window_size[1] * 0.2:
+            scroll -= s * dt
+
+        max_s = 0.15 * window_scale + y_dist * (rows - 5)
+        scroll = max(0, scroll)
+        scroll = min(max_s, scroll)
+
+        print(max_s, scroll)
+
+        if rows < 5:
+            scroll = 0
+
         offset[1] -= dt * offset[1] * 5
         offset[1] = max(0, offset[1])
 
@@ -47,8 +79,35 @@ def run(window_size, old_window):
         mouse_extras.update_states()
 
         screen.blit(transform.scale(old_window, window_size), (0,0))
+        draw.rect(screen, (130, 130, 130), (0, offset[1] - 10, window_size[0], window_size[1]))
 
-        draw.rect(window, (140, 140, 140), (offset[0], offset[1] + 0, window_size[0], window_size[1]))
+        k = key.get_pressed()
+
+        for level_num in range(levels):
+
+            y = int(level_num / max_columns)
+            x = level_num - y * max_columns
+
+            x += 1
+            y += 1
+
+            x *= x_dist
+
+            if y_dist == 0:
+                y += window_size[1] / 2
+            else:
+                y *= y_dist
+
+
+            y -= scroll
+            level_num += 1
+
+            if level_button(level_num, window, window_size, window_scale, (x, y)):
+                game.run(level_num, window_size)
+
+        if k[K_F2]:
+            gfunc.show_fps(window)
+
         screen.blit(window, offset)
 
         display.update()

@@ -1,5 +1,5 @@
 from pygame import *
-import math
+import math, time
 import mouse_extras
 
 def slope(angle):
@@ -52,59 +52,40 @@ def event_loop():
         if e.type == VIDEORESIZE:
             return e.w, e.h
 
+font.init()
+base_font = font.SysFont(None, 100)
+def text_button(window, window_size, window_offset, text, text_colour, max_rect, alignment = None):
+    max_rect = list(max_rect)
 
-def text_button(window, window_size, window_offset, text, text_colour, rect, margin = 0.02, background_rect = None):
-    base_font = font.SysFont(None, 100)
+    test_message = base_font.render(text, 0, (0,0,0))
+    rect = test_message.get_rect()
 
-    # Text will be centered in the rect
+    scale = min(max_rect[2] / rect.width, max_rect[3] / rect.height)
+    size = 100 * scale
 
-    # Show button
-    # Draw rect
-    if background_rect:
+    new_font = font.SysFont(None, int(size))
+    message = new_font.render(text, 0, text_colour)
+    message_rect = message.get_rect()
 
-        # Using this instead of draw.rect() so alpha values will work
-        surf = Surface((rect[2:]))
-        surf.fill(background_rect)
+    if alignment == 'center':
+        max_rect[0] -= message_rect.width / 2
+        max_rect[1] -= message_rect.height / 2
 
-        # Add alpha
-        if len(background_rect) == 4: surf.set_alpha(background_rect[3])
-        window.blit(surf, rect[:2])
-
-
-    mess_surf = base_font.render(text, 0, text_colour)
-    mes_rect = mess_surf.get_rect()
-
-    x_scale = rect[2] / mes_rect.width
-    y_scale = rect[3] / mes_rect.height
-
-    scale = min(x_scale, y_scale)
-
-    new_font = font.SysFont(None, int(scale * 100))
-    new_mes_surf = new_font.render(text, 0, text_colour)
-    new_mes_rect = new_mes_surf.get_rect()
-
-    if len(text_colour) == 4: new_mes_surf.set_alpha(text_colour[3])
-
-    x = (rect[2] - new_mes_rect.width) / 2 + rect[0]
-    y = (rect[3] - new_mes_rect.height) / 2 + rect[1]
-
-    new_mes_rect_list = [x, y, new_mes_rect.width, new_mes_rect.height]
-    window.blit(new_mes_surf, (x, y))
+    rect = (max_rect[0], max_rect[1], message_rect.width, message_rect.height)
+    if key.get_pressed()[K_F2]:
+        draw.rect(window, (200, 200, 50), rect, 2)
 
 
-    # Is the button clicked?
-    states = mouse_extras.get_states()
+    window.blit(message, (max_rect[0], max_rect[1]))
 
     mouse_pos = mouse.get_pos()
-    mouse_rect = [mouse_pos[0] - window_offset[0], mouse_pos[1] - window_offset[1], 0, 0]
+    mouse_rect = (mouse_pos[0], mouse_pos[1], 0, 0)
 
-    if key.get_pressed()[K_F2]:
-        draw.rect(window, (200, 200, 0), new_mes_rect_list, 2)
-        draw.rect(window, (0, 0, 0), mouse_rect, 20)
-
-    if touching(new_mes_rect_list, mouse_rect):
-        if mouse_extras.get_states()[0] == -1:
+    if mouse_extras.get_states()[0] == -1:
+        if touching(rect, mouse_rect):
             return True
+
+
 
 
 
@@ -117,6 +98,32 @@ def touching(rect1, rect2):
 
                     return True
     return False
+
+last_time = time.time()
+def fps_counter():
+    global last_time
+
+    temp_time = time.time()
+    time_since_last = temp_time - last_time
+
+    fps = 1 / time_since_last
+    last_time = temp_time
+
+    return fps
+
+
+def show_fps(window):
+
+    rect = window.get_rect()
+
+    window_scale = min(rect.width, rect.height) * 0.1
+
+    f = font.SysFont(None, int(window_scale * 1))
+    message = f.render(str(int(fps_counter())), 0, (200, 200, 0))
+
+    dist = window_scale * 0.5
+    window.blit(message, (dist, dist))
+
 
 
 def get_pos_on_path(path, dist):

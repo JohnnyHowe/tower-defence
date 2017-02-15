@@ -49,7 +49,8 @@ def run(window_size):
         x, y = window_size[0] / 2, window_size[1] * 0.75
         width, height = window_size[0] * scale, window_size[1] * scale
 
-        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)): level_select.run(window_size, window)
+        k = key.get_pressed()
+        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)) or k[K_RETURN]: level_select.run(window_size, window)
 
         screen.blit(window, (0,0))
         display.update()
