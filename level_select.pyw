@@ -40,7 +40,7 @@ def run(window_size, old_window):
 
         screen, window_size, window_scale = resize(screen, window_size)
         window = Surface(window_size)
-        window.fill((140, 140, 140))
+        window.fill((130, 130, 130))
         dt = clock.tick() / 1000
 
         x_dist = window_size[0] / (min(max_columns, levels) + 1)
@@ -63,8 +63,6 @@ def run(window_size, old_window):
         scroll = max(0, scroll)
         scroll = min(max_s, scroll)
 
-        print(max_s, scroll)
-
         if rows < 5:
             scroll = 0
 
@@ -79,9 +77,10 @@ def run(window_size, old_window):
         mouse_extras.update_states()
 
         screen.blit(transform.scale(old_window, window_size), (0,0))
-        draw.rect(screen, (130, 130, 130), (0, offset[1] - 10, window_size[0], window_size[1]))
+        # draw.rect(screen, (120, 120, 120), (0, offset[1] - 10, window_size[0], window_size[1]))
 
         k = key.get_pressed()
+        button_pressed = None
 
         for level_num in range(levels):
 
@@ -102,8 +101,12 @@ def run(window_size, old_window):
             y -= scroll
             level_num += 1
 
+
             if level_button(level_num, window, window_size, window_scale, (x, y)):
-                game.run(level_num, window_size)
+                button_pressed = level_num
+
+        if button_pressed:
+            game.run(button_pressed, window_size, window)
 
         if k[K_F2]:
             gfunc.show_fps(window)

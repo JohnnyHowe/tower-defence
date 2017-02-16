@@ -71,15 +71,24 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
         max_rect[0] -= message_rect.width / 2
         max_rect[1] -= message_rect.height / 2
 
-    rect = (max_rect[0], max_rect[1], message_rect.width, message_rect.height)
-    if key.get_pressed()[K_F2]:
-        draw.rect(window, (200, 200, 50), rect, 2)
+
+    mouse_pos = list(mouse.get_pos())
+    mouse_pos[0] -= window_offset[0]
+    mouse_pos[1] -= window_offset[1]
+
+    mouse_pos[0] = int(mouse_pos[0])
+    mouse_pos[1] = int(mouse_pos[1])
+
+    mouse_rect = (mouse_pos[0], mouse_pos[1], 0, 0)
 
 
     window.blit(message, (max_rect[0], max_rect[1]))
 
-    mouse_pos = mouse.get_pos()
-    mouse_rect = (mouse_pos[0], mouse_pos[1], 0, 0)
+    rect = (max_rect[0], max_rect[1], message_rect.width, message_rect.height)
+    if key.get_pressed()[K_F2]:
+        draw.rect(window, (200, 200, 50), rect, 2)
+        draw.circle(window, (0,0,0), mouse_pos, 5)
+
 
     if mouse_extras.get_states()[0] == -1:
         if touching(rect, mouse_rect):
@@ -123,7 +132,6 @@ def show_fps(window):
 
     dist = window_scale * 0.5
     window.blit(message, (dist, dist))
-
 
 
 def get_pos_on_path(path, dist):

@@ -1,11 +1,15 @@
 from pygame import *
-import pickle, math, mouse_extras, tower_manager, enemy_manager
+import pickle, math, mouse_extras, tower_manager, enemy_manager, random
 import global_functions as gfunc
+import time as Time
 
-def run(level, window_size):
+def run(level, window_size, old_window):
+
+    # Animation thing
+    y_change = -1
 
     # Set up
-    window = display.set_mode(window_size, RESIZABLE)
+    main_window = display.set_mode(window_size, RESIZABLE)
     clock = time.Clock()
 
     # Get level info
@@ -90,7 +94,8 @@ def run(level, window_size):
         while True:
 
             # Must be at start
-            offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
+            offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+            window = Surface(window_size)
             mouse_extras.update(game_scale, playing_grid, offset)
             message_surf = Surface((game_size[0], math.ceil(game_scale)))
 
@@ -132,14 +137,24 @@ def run(level, window_size):
             window.blit(game_window, offset)
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
+            if y_change != 0.0:
+                surf = transform.scale(old_window, window_size)
+                main_window.blit(surf, (0,0))
+
+            main_window.blit(window, (0, y_change * window_size[1]))
             display.update()
 
+            y_change -= y_change * 5 * dt
+            if y_change > -0.0001: y_change = 0
 
         enemy_handler.set_enemy_path()
+        y_change = 0
 
         # Fight!
         restart = False
         tower_handler.reset()
+
+        offset, window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
 
         while not restart:
 
@@ -192,7 +207,7 @@ def run(level, window_size):
             display.update()
 
 
-        # Death screen
+        # Final screen
 
         window_y = window_size[1]
         while not restart:
@@ -225,7 +240,11 @@ def run(level, window_size):
             enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
 
             # Show death window
-            if death_window(game_window, game_size, offset, (0, window_y)): break
+            if state == 0:
+                if death_window(game_window, game_size, offset, (0, window_y)): break
+            elif state == 1:
+                if win_window(game_window, game_size, offset, (0, window_y), dt): break
+
 
             # Move death window
             max_height = -game_scale * tower_select_rows / 2
@@ -280,7 +299,79 @@ def death_window(window, window_size, window_offset, offset):
 
     # Buttons
     width, height = 175 * scale, 75 * scale
-    restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
+    # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
-    return restart
+    return gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour, (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
+
+current_confetti = []
+last_time = Time.time()
+def win_window(window, window_size, window_offset, offset, dt):
+
+    # Confetti
+
+    # Make more
+    global last_time
+    if last_time > 1:
+        current_confetti.append([[random.random(), -1], (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))])
+        last_time = 0
+    else:
+        last_time += dt * 50
+
+    # Show all
+    width = min(window_size) / 10
+
+    for pos, colour in current_confetti:
+        rect = pos[0] * window_size[0], pos[1] * window_size[1], width, width * 2
+        draw.rect(window, colour, rect)
+
+    # Move all
+    for index in range(len(current_confetti)):
+        current_confetti[index][0][1] += dt * 2
+
+    # Delete if not on screen
+    for confetti in current_confetti:
+        if confetti[0][1] > 1:
+            index = current_confetti.index(confetti)
+            current_confetti.pop(index)
+
+
+    background_colour = (150, 150, 150)
+    text_colour = (255, 255, 255)
+
+    scale = min(window_size)
+    margin_x = scale / 8
+    margin_y = scale / 15
+
+    width = scale / 16 * 16
+    height = scale / 16 * 9
+
+    window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
+    draw.rect(window, background_colour, window_rect)
+
+
+    # Show header and get scale etc
+    header = 'You Win!'
+
+    max_width = width - margin_x * 2
+    max_height = height - margin_y * 2
+
+    test = base_font.render(header, 0, (0, 0, 0))
+    test_rect = test.get_rect()
+
+    width_scale = max_width / test_rect.width
+    height_scale = max_height / test_rect.height
+
+    scale = min(width_scale, height_scale)
+
+    new_font = font.SysFont(None, int(100 * scale))
+    header_message = new_font.render(header, 0, text_colour)
+
+    window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
+
+
+    # Buttons
+    width, height = 175 * scale, 75 * scale
+    # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
+
+    return gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour, (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
