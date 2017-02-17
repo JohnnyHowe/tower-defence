@@ -81,6 +81,7 @@ def run(window_size, old_window):
 
         k = key.get_pressed()
         button_pressed = None
+        ret = None
 
         for level_num in range(levels):
 
@@ -106,7 +107,12 @@ def run(window_size, old_window):
                 button_pressed = level_num
 
         if button_pressed:
-            game.run(button_pressed, window_size, window)
+            ret, new_window = game.run(button_pressed, window_size, window)
+
+        while True:
+            if type(ret) == int:
+                ret, new_window = game.run(button_pressed + 1, window_size, new_window)
+            else: break
 
         if k[K_F2]:
             gfunc.show_fps(window)

@@ -3,10 +3,7 @@ import pickle, math, mouse_extras, tower_manager, enemy_manager, random
 import global_functions as gfunc
 import time as Time
 
-def run(level, window_size, old_window):
-
-    # Animation thing
-    y_change = -1
+def run(level, window_size, old_window, y_change = -1):
 
     # Set up
     main_window = display.set_mode(window_size, RESIZABLE)
@@ -34,12 +31,19 @@ def run(level, window_size, old_window):
 
         if key.get_pressed()[K_F2]:
 
+            # Show fps
+            gfunc.show_fps(game_window)
+
             # Enemies
             for enemy in enemy_handler.enemies:
-                rect = enemy.get_rect(game_scale)
 
-                if rect:
-                    draw.rect(game_window, (255, 100, 100), rect, 2)
+                try:
+                    rect = enemy.get_rect(game_scale)
+
+                    if rect:
+                        draw.rect(game_window, (255, 100, 100), rect, 2)
+                except:
+                    pass
 
             # Towers
             for tower in tower_handler.towers:
@@ -134,6 +138,7 @@ def run(level, window_size, old_window):
 
             # Must be at end
             window.fill((30, 30, 30))
+            show_dev_things()
             window.blit(game_window, offset)
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
@@ -209,6 +214,9 @@ def run(level, window_size, old_window):
 
         # Final screen
 
+        global current_confetti
+        current_confetti = []
+
         window_y = window_size[1]
         while not restart:
 
@@ -241,10 +249,25 @@ def run(level, window_size, old_window):
 
             # Show death window
             if state == 0:
-                if death_window(game_window, game_size, offset, (0, window_y)): break
-            elif state == 1:
-                if win_window(game_window, game_size, offset, (0, window_y), dt): break
+                value = death_window(game_window, game_size, offset, (0, window_y))
 
+                if value == 'restart':
+                    break
+            elif state == 1:
+                value = win_window(game_window, game_size, offset, (0, window_y), dt)
+
+                if value:
+
+                    rect = window.get_rect()
+                    surf = Surface((rect.width, rect.height))
+
+                    surf.fill((30, 30, 30))
+                    surf.blit(game_window, offset)
+                    surf.blit(message_surf, (offset[0], offset[1] - game_scale))
+
+                    if value == 'restart': break
+                    if value == 'next': return level + 1, surf
+                    if value == 'menu': return 'menu', surf
 
             # Move death window
             max_height = -game_scale * tower_select_rows / 2
@@ -254,6 +277,7 @@ def run(level, window_size, old_window):
 
             # Must be at end
             window.fill((30, 30, 30))
+            show_dev_things()
             window.blit(game_window, offset)
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
@@ -263,7 +287,7 @@ def run(level, window_size, old_window):
 base_font = font.SysFont(None, 100)
 def death_window(window, window_size, window_offset, offset):
 
-    background_colour = (150, 150, 150)
+    background_colour = (120, 120, 120)
     text_colour = (255, 255, 255)
 
     scale = min(window_size)
@@ -298,36 +322,77 @@ def death_window(window, window_size, window_offset, offset):
 
 
     # Buttons
-    width, height = 175 * scale, 75 * scale
+    width = 175 * scale
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
-    return gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour, (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
+    # Height ratios
+    heights = [1]
+    max_height = 100 * scale
+    margin = 0.05
+
+    # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
+
+    # Make ratio add to 1
+    scale = 1 / (sum(heights) + margin * len(heights))
+
+    for index in range(len(heights)):
+        heights[index] = heights[index] * scale * max_height
+
+    # Just makes it easy to loop through
+    buttons = [('Restart', 'restart')]
+
+    y_height = 0
+    for index in range(len(buttons)):
+        name, func = buttons[index]
+
+        height = heights[index]
+
+        y = window_rect[1] + window_rect[3] * 0.6 + y_height
+        y_height += height
+
+        g_value = 220
+        if gfunc.text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width, height), alignment = 'center'): return func
 
 
 current_confetti = []
-last_time = Time.time()
+last_time = 0
 def win_window(window, window_size, window_offset, offset, dt):
 
     # Confetti
 
     # Make more
     global last_time
-    if last_time > 1:
-        current_confetti.append([[random.random(), -1], (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))])
-        last_time = 0
-    else:
-        last_time += dt * 50
+
+    while last_time > 1:
+        scale = random.random()
+        size = max(scale * 0.1, 0.045)
+
+        while True:
+            # Make colour look good
+            colour = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+            vibrance = abs(colour[0] - colour[1]) + abs(colour[1] - colour[2]) + abs(colour[2] - colour[0])
+
+            # Only continue if colour is a good colour
+            if vibrance > 200:
+                break
+
+
+        current_confetti.append([[random.random(), -1, size * 0.3, size], (1 + scale * 8) / 7, colour])
+        last_time -= 1
+
+    last_time += dt * 150
+
 
     # Show all
-    width = min(window_size) / 10
+    width = min(window_size) / 100
 
-    for pos, colour in current_confetti:
-        rect = pos[0] * window_size[0], pos[1] * window_size[1], width, width * 2
+    for rect, speed, colour in current_confetti:
+        rect = rect[0] * window_size[0], rect[1] * window_size[1], rect[2] * window_size[0], rect[3] * window_size[1]
         draw.rect(window, colour, rect)
 
     # Move all
     for index in range(len(current_confetti)):
-        current_confetti[index][0][1] += dt * 2
+        current_confetti[index][0][1] += dt * current_confetti[index][1]
 
     # Delete if not on screen
     for confetti in current_confetti:
@@ -336,7 +401,7 @@ def win_window(window, window_size, window_offset, offset, dt):
             current_confetti.pop(index)
 
 
-    background_colour = (150, 150, 150)
+    background_colour = (120, 120, 120)
     text_colour = (255, 255, 255)
 
     scale = min(window_size)
@@ -371,7 +436,35 @@ def win_window(window, window_size, window_offset, offset, dt):
 
 
     # Buttons
-    width, height = 175 * scale, 75 * scale
+    width = 175 * scale
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
-    return gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour, (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
+    # Height ratios
+    heights = [0.5, 0.4, 0.38]
+    max_height = 100 * scale
+    margin = 0.05
+
+    # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
+
+    # Make ratio add to 1
+    scale = 1 / (sum(heights) + margin * len(heights))
+
+    for index in range(len(heights)):
+        heights[index] = heights[index] * scale * max_height
+
+
+    # Just makes it easy to loop through
+    buttons = [('Next level', 'next'), ('Menu', 'menu'), ('Restart', 'restart')]
+
+    y_height = 0
+    for index in range(len(buttons)):
+        name, func = buttons[index]
+
+        height = heights[index]
+
+        y = window_rect[1] + window_rect[3] * 0.6 + y_height
+        y_height += height
+
+        g_value = 220
+        if gfunc.text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width, height), alignment = 'center'): return func
+

@@ -63,6 +63,8 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
     scale = min(max_rect[2] / rect.width, max_rect[3] / rect.height)
     size = 100 * scale
 
+    outline_size = 10
+
     new_font = font.SysFont(None, int(size))
     message = new_font.render(text, 0, text_colour)
     message_rect = message.get_rect()
@@ -80,7 +82,6 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
     mouse_pos[1] = int(mouse_pos[1])
 
     mouse_rect = (mouse_pos[0], mouse_pos[1], 0, 0)
-
 
     window.blit(message, (max_rect[0], max_rect[1]))
 
@@ -124,11 +125,12 @@ def fps_counter():
 def show_fps(window):
 
     rect = window.get_rect()
-
     window_scale = min(rect.width, rect.height) * 0.1
 
     f = font.SysFont(None, int(window_scale * 1))
-    message = f.render(str(int(fps_counter())), 0, (200, 200, 0))
+
+    fps = str(int(fps_counter()))
+    message = f.render(fps, 0, (100, 100, 0))
 
     dist = window_scale * 0.5
     window.blit(message, (dist, dist))
