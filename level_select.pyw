@@ -114,6 +114,9 @@ def run(window_size, old_window):
                 ret, new_window = game.run(button_pressed + 1, window_size, new_window)
             else: break
 
+        if k[K_ESCAPE]:
+            return window
+
         if k[K_F2]:
             gfunc.show_fps(window)
 

@@ -93,6 +93,8 @@ def run(level, window_size, old_window, y_change = -1):
     # Game loop (loop through the stages)
     while True:
 
+        paused = 0
+
         # Set up loop (game)
         enemy_handler.load_enemies(level_info['enemies'])
         while True:
@@ -102,6 +104,7 @@ def run(level, window_size, old_window, y_change = -1):
             window = Surface(window_size)
             mouse_extras.update(game_scale, playing_grid, offset)
             message_surf = Surface((game_size[0], math.ceil(game_scale)))
+            gfunc.update_keys(key)
 
             # Does the game need to progress to the next stage?
             k = key.get_pressed()
@@ -124,7 +127,6 @@ def run(level, window_size, old_window, y_change = -1):
             enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
 
             # Show message
-
             if enemy_handler.path:
                 gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.7, pos = ('mid', 'top'))
                 gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.5, pos = ('mid', 'low'), colour = (90, 90, 90))
@@ -135,6 +137,22 @@ def run(level, window_size, old_window, y_change = -1):
                 red_value += last_red_change * dt * 500
                 red_value = max(min(255, red_value), 150)
                 if red_value >= 255 or red_value <= 150: last_red_change = -last_red_change
+
+            # Pause button
+            value = gfunc.get_key_states()[K_ESCAPE]
+            if value == -1: paused = abs(paused - 1)
+
+            print(paused)
+
+            if paused:
+                value = gfunc.pause(game_window, game_size, offset, (0, 0))
+
+                if value:
+                    if value == 'menu':
+                        window.fill((30, 30, 30))
+                        window.blit(game_window, offset)
+                        window.blit(message_surf, (offset[0], offset[1] - game_scale))
+                        return 'menu', window
 
             # Must be at end
             window.fill((30, 30, 30))
@@ -268,6 +286,7 @@ def run(level, window_size, old_window, y_change = -1):
                     if value == 'restart': break
                     if value == 'next': return level + 1, surf
                     if value == 'menu': return 'menu', surf
+
 
             # Move death window
             max_height = -game_scale * tower_select_rows / 2

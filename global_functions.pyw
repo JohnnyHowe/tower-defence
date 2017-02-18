@@ -2,6 +2,79 @@ from pygame import *
 import math, time
 import mouse_extras
 
+font.init()
+
+base_font = font.SysFont(None, 100)
+def pause(window, window_size, window_offset, offset):
+
+    background_colour = (120, 120, 120)
+    text_colour = (255, 255, 255)
+
+    scale = min(window_size)
+    margin_x = scale / 8
+    margin_y = scale / 15
+
+    width = scale / 16 * 16
+    height = scale / 16 * 9
+
+    window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
+    draw.rect(window, background_colour, window_rect)
+
+
+    # Show header and get scale etc
+    header = 'Paused'
+
+    max_width = width - margin_x * 2
+    max_height = height - margin_y * 2
+
+    test = base_font.render(header, 0, (0, 0, 0))
+    test_rect = test.get_rect()
+
+    width_scale = max_width / test_rect.width
+    height_scale = max_height / test_rect.height
+
+    scale = min(width_scale, height_scale)
+
+    new_font = font.SysFont(None, int(100 * scale))
+    header_message = new_font.render(header, 0, text_colour)
+
+    window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
+
+
+    # Buttons
+    width = 175 * scale
+    # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
+
+    # Height ratios
+    heights = [1]
+    max_height = 80 * scale
+    margin = 0.3
+
+    # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
+
+    # Make ratio add to 1
+    scale = 1 / (sum(heights) + margin * len(heights))
+
+    for index in range(len(heights)):
+        heights[index] = heights[index] * scale * max_height
+
+    # Just makes it easy to loop through
+    buttons = [('Quit', 'menu')]
+
+    y_height = margin * window_rect[1]
+    for index in range(len(buttons)):
+        name, func = buttons[index]
+
+        height = heights[index]
+
+        y = window_rect[1] + window_rect[3] * 0.6 + y_height
+        y_height += height
+
+        g_value = 220
+        if text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width, height), alignment = 'center'): return func
+
+
+
 def slope(angle):
 
     while angle > 360: angle -= 360
@@ -21,6 +94,28 @@ def slope(angle):
 
     return x, y
 
+def update_keys(key):
+    global key_states, last_key_states
+    states = list(key.get_pressed())
+
+    if last_key_states == None:
+        last_key_states = list(states)
+        key_states = states
+        return
+
+
+    new_states = []
+    for key in range(len(states)):
+        new_states.append(states[K_ESCAPE] - last_key_states[K_ESCAPE])
+
+    key_states = new_states
+    last_key_states = list(states)
+
+
+last_key_states = None
+key_states = None
+def get_key_states():
+    return list(key_states)
 
 def get_rot(p1, p2):
 
@@ -45,10 +140,6 @@ def event_loop():
     for e in event.get():
         if e.type == QUIT:
             quit()
-        if e.type == KEYDOWN:
-            if e.key == K_ESCAPE:
-                quit()
-
         if e.type == VIDEORESIZE:
             return e.w, e.h
 
@@ -94,9 +185,6 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
     if mouse_extras.get_states()[0] == -1:
         if touching(rect, mouse_rect):
             return True
-
-
-
 
 
 def touching(rect1, rect2):

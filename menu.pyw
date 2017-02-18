@@ -7,6 +7,7 @@ def run(window_size):
     init()
     screen = display.set_mode(window_size, RESIZABLE)
     test_font = font.SysFont(None, 100)
+    clock = time.Clock()
 
     def resize(window, window_size):
         new = gfunc.event_loop()
@@ -18,6 +19,7 @@ def run(window_size):
         else:
             return window, window_size, min(window_size)
 
+    old_window = None
 
     while True:
 
@@ -50,7 +52,8 @@ def run(window_size):
         width, height = window_size[0] * scale, window_size[1] * scale
 
         k = key.get_pressed()
-        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)) or k[K_RETURN]: level_select.run(window_size, window)
+        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)) or k[K_RETURN]: old_window = level_select.run(window_size, window); offset2 = 0
 
-        screen.blit(window, (0,0))
+        screen.blit(window, (0, 0))
+
         display.update()
