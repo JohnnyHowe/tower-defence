@@ -6,7 +6,7 @@ def run(window_size):
 
     init()
     screen = display.set_mode(window_size, RESIZABLE)
-    test_font = font.SysFont(None, 100)
+    test_font = font.SysFont('arial', 100)
     clock = time.Clock()
 
     def resize(window, window_size):
@@ -37,7 +37,7 @@ def run(window_size):
         test_rect = test_font.render(message, 0, (0,0,0)).get_rect()
         scale = min(win_rect.width / (test_rect.width + 2 * margin), win_rect.height / (test_rect.height + 2 * margin), win_rect.height / 200)
 
-        new_font = font.SysFont(None, int(scale * 100))
+        new_font = font.SysFont('arial', int(scale * 100))
         message_surf = new_font.render(message, 0, (255, 255, 255))
         message_rect = message_surf.get_rect()
 
@@ -52,8 +52,10 @@ def run(window_size):
         width, height = window_size[0] * scale, window_size[1] * scale
 
         k = key.get_pressed()
-        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)) or k[K_RETURN]: old_window = level_select.run(window_size, window); offset2 = 0
+        if gfunc.text_button(window, window_size, (0,0), 'Start', (200, 200, 200), (x - width / 2, y - height / 2, width, height)) or k[K_RETURN]:
+            old_window = level_select.run(window_size, window); offset2 = 0
+            rect = old_window.get_rect()
+            window_size = rect.width, rect.height
 
         screen.blit(window, (0, 0))
-
         display.update()

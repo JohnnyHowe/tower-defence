@@ -4,74 +4,95 @@ import mouse_extras
 
 font.init()
 
-base_font = font.SysFont(None, 100)
-def pause(window, window_size, window_offset, offset):
+base_font = font.SysFont('arial', 100)
+def pause(old_window, window_size, window_offset, offset):
 
-    background_colour = (120, 120, 120)
-    text_colour = (255, 255, 255)
+    # Copy old surf to show
+    old_surf = Surface.copy(old_window)
+    old_rect = old_surf.get_rect()
 
-    scale = min(window_size)
-    margin_x = scale / 8
-    margin_y = scale / 15
+    # Make new window
+    window = display.set_mode(window_size, RESIZABLE)
 
-    width = scale / 16 * 16
-    height = scale / 16 * 9
+    # Show background
+    window.fill((30, 30, 30))
 
-    window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
-    draw.rect(window, background_colour, window_rect)
+    while True:
+
+        # Event loop
+        events = event.get()
+        for item in events:
+
+            # Quit
+            if item.type == QUIT:
+                quit()
+
+            # Resize
+            if item.type == VIDEORESIZE:
+                window_size = item.w, item.h
+                window = display.set_mode(window_size, RESIZABLE)
+                window.fill((30, 30, 30))
+
+            # Exit pause?
+            if item.type == MOUSEBUTTONDOWN:
+                if item.button == 1:
+                    pass
+
+        # Background
+        wr = window_size[0] / old_rect.width
+        hr = window_size[1] / old_rect.height
+
+        scale = min(wr, hr)
+
+        size = (int(old_rect.width * scale), math.ceil(old_rect.height * scale))
+        mscale = min(window_size)
+        pause_button_size = mscale / 1.5, mscale / 3
+        rect_offset = int(window_size[0] - size[0]) / 2, int(window_size[1] - size[1]) / 2
+        surf = transform.scale(old_surf, size)
+        window.blit(surf, rect_offset)
+
+        # Pause button background
+        draw.rect(window, (100, 100, 100), ((window_size[0] - pause_button_size[0]) / 2, (window_size[1] - pause_button_size[1]) / 2, pause_button_size[0], pause_button_size[1]))
+
+        buttons = [('Resume', 'resume'), ('Quit', 'quit')]
+        text_size = size[1] / 13
+        header = font.SysFont('arial', int(text_size * 1.5))
+        main_font = font.SysFont('arial', int(text_size))
+
+        # Pause sign
+        message = header.render('Paused', 0, (255, 255, 255))
+        rect = message.get_rect()
+        window.blit(message, ((window_size[0] - rect.width) / 2, (window_size[1] - rect.height) / 2 - mscale / 10))
+
+        for index in range(len(buttons)):
+            name, id = buttons[index]
+
+            message = main_font.render(name, 0, (255, 255, 255))
+            rect = message.get_rect()
+
+            # Show
+            x = (window_size[0] - rect.width) / 2
+            y = (window_size[1] - rect.height) / 2 + mscale / 15 * index + mscale / 50
+
+            message_rect = x, y, rect.width, rect.height
+            mouse_rect = mouse.get_pos()[0], mouse.get_pos()[1], 0, 0
+
+            if touching(message_rect, mouse_rect):
+                message = main_font.render(name, 0, (200, 200, 200))
+                window.blit(message, (x, y))
+
+                # Is the mouse clicked?
+                for item in events:
+                    if item.type == MOUSEBUTTONDOWN:
+                        if item.button == 1:
+                            update_keys(key)
+                            return window_size, id
+
+            else:
+                window.blit(message, (x, y))
 
 
-    # Show header and get scale etc
-    header = 'Paused'
-
-    max_width = width - margin_x * 2
-    max_height = height - margin_y * 2
-
-    test = base_font.render(header, 0, (0, 0, 0))
-    test_rect = test.get_rect()
-
-    width_scale = max_width / test_rect.width
-    height_scale = max_height / test_rect.height
-
-    scale = min(width_scale, height_scale)
-
-    new_font = font.SysFont(None, int(100 * scale))
-    header_message = new_font.render(header, 0, text_colour)
-
-    window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
-
-
-    # Buttons
-    width = 175 * scale
-    # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
-
-    # Height ratios
-    heights = [1]
-    max_height = 80 * scale
-    margin = 0.3
-
-    # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
-
-    # Make ratio add to 1
-    scale = 1 / (sum(heights) + margin * len(heights))
-
-    for index in range(len(heights)):
-        heights[index] = heights[index] * scale * max_height
-
-    # Just makes it easy to loop through
-    buttons = [('Quit', 'menu')]
-
-    y_height = margin * window_rect[1]
-    for index in range(len(buttons)):
-        name, func = buttons[index]
-
-        height = heights[index]
-
-        y = window_rect[1] + window_rect[3] * 0.6 + y_height
-        y_height += height
-
-        g_value = 220
-        if text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width, height), alignment = 'center'): return func
+        display.update()
 
 
 
@@ -144,7 +165,7 @@ def event_loop():
             return e.w, e.h
 
 font.init()
-base_font = font.SysFont(None, 100)
+base_font = font.SysFont('arial', 100)
 def text_button(window, window_size, window_offset, text, text_colour, max_rect, alignment = None):
     max_rect = list(max_rect)
 
@@ -156,7 +177,7 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
 
     outline_size = 10
 
-    new_font = font.SysFont(None, int(size))
+    new_font = font.SysFont('arial', int(size))
     message = new_font.render(text, 0, text_colour)
     message_rect = message.get_rect()
 
@@ -180,7 +201,6 @@ def text_button(window, window_size, window_offset, text, text_colour, max_rect,
     if key.get_pressed()[K_F2]:
         draw.rect(window, (200, 200, 50), rect, 2)
         draw.circle(window, (0,0,0), mouse_pos, 5)
-
 
     if mouse_extras.get_states()[0] == -1:
         if touching(rect, mouse_rect):
@@ -215,7 +235,7 @@ def show_fps(window):
     rect = window.get_rect()
     window_scale = min(rect.width, rect.height) * 0.1
 
-    f = font.SysFont(None, int(window_scale * 1))
+    f = font.SysFont('arial', int(window_scale * 1))
 
     fps = str(int(fps_counter()))
     message = f.render(fps, 0, (100, 100, 0))
@@ -249,8 +269,8 @@ def get_pos_on_path(path, dist):
 
 
 font.init()
-default_font = font.SysFont(None, 100) # Used to find the real font (to work out scale)
-def show_message(text, window, colour = (70, 70, 70), size = None, pos = 'mid', boarder = 0.2):
+default_font = font.SysFont('arial', 100) # Used to find the real font (to work out scale)
+def show_message(text, window, colour = (70, 70, 70), size = None, pos = 'mid', border = 0.2):
 
     window_rect = window.get_rect()
     max_width = window_rect.width
@@ -261,14 +281,14 @@ def show_message(text, window, colour = (70, 70, 70), size = None, pos = 'mid', 
         # Working out scale
         message = default_font.render(text, 0, (0, 0, 0))
         mes_rect = message.get_rect()
-        mes_rect.height += boarder * 100
-        mes_rect.width += boarder * 100
+        mes_rect.height += border * 100
+        mes_rect.width += border * 100
 
         scale = min(max_width / mes_rect.width, max_height / mes_rect.height)
         size = int(scale * 100)
 
     # Make message
-    use_font = font.SysFont(None, int(size))
+    use_font = font.SysFont('arial', int(size))
     message = use_font.render(text, 0, colour)
 
     # Center message
@@ -279,15 +299,15 @@ def show_message(text, window, colour = (70, 70, 70), size = None, pos = 'mid', 
         pos = list(pos)
 
         if pos[0] == 'mid': pos[0] = (max_width - rect.width) / 2
-        elif pos[0] == 'right': pos[0] = max_width - rect.width - boarder * size / 2
+        elif pos[0] == 'right': pos[0] = max_width - rect.width - border * size / 2
         elif pos[0] == 'left': pos[0] = (max_height - rect.height) / 2
 
         if pos[1] == 'mid': pos[1] = (max_height - rect.height) / 2
-        elif pos[1] == 'top': pos[1] = boarder * size / 2
-        elif pos[1] == 'low': pos[1] = max_height - rect.height - boarder * size / 2
+        elif pos[1] == 'top': pos[1] = border * size / 2
+        elif pos[1] == 'low': pos[1] = max_height - rect.height - border * size / 2
 
-    elif pos == 'left': pos = boarder * size / 2, (max_height - rect.height) / 2
-    elif pos == 'right': pos = max_width - rect.width - boarder * size / 2, (max_height - rect.height) / 2
+    elif pos == 'left': pos = border * size / 2, (max_height - rect.height) / 2
+    elif pos == 'right': pos = max_width - rect.width - border * size / 2, (max_height - rect.height) / 2
     else: pos = (max_width - rect.width) / 2, (max_height - rect.height) / 2
 
     window.blit(message, pos)

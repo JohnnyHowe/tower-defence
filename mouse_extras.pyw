@@ -1,4 +1,5 @@
 from pygame import *
+import time
 
 
 def update_states():
@@ -17,6 +18,7 @@ def update_states():
 
         states = [0,0,0]
         old_state = [0,0,0]
+
 
 
 def update_buttons():

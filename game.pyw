@@ -3,7 +3,7 @@ import pickle, math, mouse_extras, tower_manager, enemy_manager, random
 import global_functions as gfunc
 import time as Time
 
-def run(level, window_size, old_window, y_change = -1):
+def run(level, max_levels, window_size, old_window, y_change = -1):
 
     # Set up
     main_window = display.set_mode(window_size, RESIZABLE)
@@ -80,6 +80,27 @@ def run(level, window_size, old_window, y_change = -1):
         if new: window_size = new; window = display.set_mode(window_size, RESIZABLE)
         return offset, window, window_size, game_window, game_size, scale
 
+    def pause(window_size):
+        escape = gfunc.get_key_states()[K_ESCAPE]
+        if escape:
+
+            surf_size = game_size[1] + message_height * game_scale
+            surf = Surface((game_size[0], surf_size))
+
+            surf.blit(game_window, (0, math.ceil(game_scale)))
+            surf.blit(message_surf, (0, 0))
+
+            window_size, value = gfunc.pause(surf, window_size, offset, (0, 0))
+            clock.tick()
+
+            if value == 'quit':
+                window.fill((30, 30, 30))
+                window.blit(game_window, (offset[0], offset[1]))
+                window.blit(message_surf, (offset[0], offset[1] - game_scale))
+                return 'quit', Surface(window_size)
+
+            return 'done', window_size
+
     # Set background functions
     if type(level_info['background']) == tuple: show_background = show_background_colour; background = level_info['background']
     else: show_background = show_background_image; background = image.load(level_info['background'])
@@ -128,10 +149,10 @@ def run(level, window_size, old_window, y_change = -1):
 
             # Show message
             if enemy_handler.path:
-                gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.7, pos = ('mid', 'top'))
-                gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.5, pos = ('mid', 'low'), colour = (90, 90, 90))
+                gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.5, pos = ('mid', 'top'))
+                gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.3, pos = ('mid', 'low'), colour = (90, 90, 90))
             else:
-                gfunc.show_message('It must be possible for the enemies to get through!', message_surf, colour = (red_value, 50, 0), boarder = 0.3)
+                gfunc.show_message('It must be possible for the enemies to get through!', message_surf, colour = (red_value, 50, 0), border = 0.3)
 
                 # Make the error message change colour for a cool animation
                 red_value += last_red_change * dt * 500
@@ -139,20 +160,15 @@ def run(level, window_size, old_window, y_change = -1):
                 if red_value >= 255 or red_value <= 150: last_red_change = -last_red_change
 
             # Pause button
-            value = gfunc.get_key_states()[K_ESCAPE]
-            if value == -1: paused = abs(paused - 1)
+            val = pause(window_size)
 
-            print(paused)
-
-            if paused:
-                value = gfunc.pause(game_window, game_size, offset, (0, 0))
-
-                if value:
-                    if value == 'menu':
-                        window.fill((30, 30, 30))
-                        window.blit(game_window, offset)
-                        window.blit(message_surf, (offset[0], offset[1] - game_scale))
-                        return 'menu', window
+            if val:
+                if val[0] == 'done':
+                    y_change = 0
+                    window_size = val[1]
+                    offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                    continue
+                else: return val
 
             # Must be at end
             window.fill((30, 30, 30))
@@ -173,7 +189,10 @@ def run(level, window_size, old_window, y_change = -1):
         enemy_handler.set_enemy_path()
         y_change = 0
 
+        # --------------------------------------------
         # Fight!
+        # --------------------------------------------
+
         restart = False
         tower_handler.reset()
 
@@ -217,7 +236,7 @@ def run(level, window_size, old_window, y_change = -1):
             tower_handler.update_towers(game_window, game_scale, game_grid, dt)
 
             # Message board
-            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.7, boarder = 1)
+            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.7, border = 1)
 
             # Fancy
             show_dev_things()
@@ -227,10 +246,23 @@ def run(level, window_size, old_window, y_change = -1):
             window.blit(game_window, offset)
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
+            # Pause button
+            gfunc.update_keys(key)
+            val = pause(window_size)
+
+            if val:
+                if val[0] == 'done':
+                    y_change = 0
+                    window_size = val[1]
+                    offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                    continue
+                else: return val
+
             display.update()
 
-
+        # ----------------------------
         # Final screen
+        # ----------------------------
 
         global current_confetti
         current_confetti = []
@@ -269,10 +301,23 @@ def run(level, window_size, old_window, y_change = -1):
             if state == 0:
                 value = death_window(game_window, game_size, offset, (0, window_y))
 
-                if value == 'restart':
-                    break
+                if value:
+
+                    rect = window.get_rect()
+                    surf = Surface((rect.width, rect.height))
+
+                    surf.fill((30, 30, 30))
+                    surf.blit(game_window, offset)
+                    surf.blit(message_surf, (offset[0], offset[1] - game_scale))
+
+                    if value == 'restart': break
+                    if value == 'next': return level + 1, surf
+                    if value == 'menu': return 'menu', surf
+
             elif state == 1:
-                value = win_window(game_window, game_size, offset, (0, window_y), dt)
+
+                next = level < max_levels
+                value = win_window(game_window, game_size, offset, (0, window_y), dt, next)
 
                 if value:
 
@@ -303,7 +348,7 @@ def run(level, window_size, old_window, y_change = -1):
             display.update()
 
 
-base_font = font.SysFont(None, 100)
+base_font = font.SysFont('arial', 100)
 def death_window(window, window_size, window_offset, offset):
 
     background_colour = (120, 120, 120)
@@ -319,9 +364,8 @@ def death_window(window, window_size, window_offset, offset):
     window_rect = [(window_size[0] - width) / 2 + offset[0], (window_size[1] - height) / 2 + offset[1], width, height]
     draw.rect(window, background_colour, window_rect)
 
-
     # Show header and get scale etc
-    header = 'You Suck!'
+    header = "You suck!"
 
     max_width = width - margin_x * 2
     max_height = height - margin_y * 2
@@ -334,7 +378,7 @@ def death_window(window, window_size, window_offset, offset):
 
     scale = min(width_scale, height_scale)
 
-    new_font = font.SysFont(None, int(100 * scale))
+    new_font = font.SysFont('arial', int(100 * scale))
     header_message = new_font.render(header, 0, text_colour)
 
     window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
@@ -345,7 +389,7 @@ def death_window(window, window_size, window_offset, offset):
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
     # Height ratios
-    heights = [1]
+    heights = [1, 1]
     max_height = 100 * scale
     margin = 0.05
 
@@ -358,7 +402,7 @@ def death_window(window, window_size, window_offset, offset):
         heights[index] = heights[index] * scale * max_height
 
     # Just makes it easy to loop through
-    buttons = [('Restart', 'restart')]
+    buttons = [('Restart', 'restart'), ('Menu', 'menu')]
 
     y_height = 0
     for index in range(len(buttons)):
@@ -375,7 +419,7 @@ def death_window(window, window_size, window_offset, offset):
 
 current_confetti = []
 last_time = 0
-def win_window(window, window_size, window_offset, offset, dt):
+def win_window(window, window_size, window_offset, offset, dt, next):
 
     # Confetti
 
@@ -395,12 +439,10 @@ def win_window(window, window_size, window_offset, offset, dt):
             if vibrance > 200:
                 break
 
-
         current_confetti.append([[random.random(), -1, size * 0.3, size], (1 + scale * 8) / 7, colour])
         last_time -= 1
 
     last_time += dt * 150
-
 
     # Show all
     width = min(window_size) / 100
@@ -435,7 +477,7 @@ def win_window(window, window_size, window_offset, offset, dt):
 
 
     # Show header and get scale etc
-    header = 'You Win!'
+    header = "You Don't Suck!"
 
     max_width = width - margin_x * 2
     max_height = height - margin_y * 2
@@ -448,7 +490,7 @@ def win_window(window, window_size, window_offset, offset, dt):
 
     scale = min(width_scale, height_scale)
 
-    new_font = font.SysFont(None, int(100 * scale))
+    new_font = font.SysFont('arial', int(100 * scale))
     header_message = new_font.render(header, 0, text_colour)
 
     window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
@@ -459,11 +501,14 @@ def win_window(window, window_size, window_offset, offset, dt):
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
     # Height ratios
-    heights = [0.5, 0.4, 0.38]
-    max_height = 100 * scale
-    margin = 0.05
+    max_height = scale * 1000
+    margin = 0.0
 
     # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
+
+    # Just makes it easy to loop through
+    if next: buttons = [('Next level', 'next'), ('Restart', 'restart'), ('Menu', 'menu')]; heights = [2, 0.1, 0.1]
+    else: buttons = [('Menu', 'menu'), ('Restart', 'restart')]; heights = [2, 2]
 
     # Make ratio add to 1
     scale = 1 / (sum(heights) + margin * len(heights))
@@ -471,19 +516,19 @@ def win_window(window, window_size, window_offset, offset, dt):
     for index in range(len(heights)):
         heights[index] = heights[index] * scale * max_height
 
-
-    # Just makes it easy to loop through
-    buttons = [('Next level', 'next'), ('Menu', 'menu'), ('Restart', 'restart')]
-
-    y_height = 0
     for index in range(len(buttons)):
         name, func = buttons[index]
 
         height = heights[index]
 
+        y_height = (index / len(buttons) * min(window_size)) * 0.2
+
+
         y = window_rect[1] + window_rect[3] * 0.6 + y_height
-        y_height += height
 
         g_value = 220
-        if gfunc.text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width, height), alignment = 'center'): return func
+        scale = 1.5
+        if gfunc.text_button(window, window_size, window_offset, name, (g_value, g_value, g_value), (window_rect[0] + window_rect[2] / 2, y, width * scale, height * scale), alignment = 'center'):
+            return func
+
 
