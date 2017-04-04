@@ -1,34 +1,33 @@
 from pygame import *
-img = image.load('images//towers//block.png')
-layer = 0
+img = image.load('images//towers//sniper_icon.png')
+layer = 1
 
-name = 'Block'
-info = 'Base for other towers, can be used to make the enemies path longer'
+name = 'Sniper'
+info = 'Slow but very high damage weapon'
 
 class Tower:
 
     def __init__(self, pos):
 
-        self.layer = layer
-
         self.pos = pos
-        self.cost = 5
+        self.cost = 50
 
-        self.id = 'block'
+        self.id = 'sniper'
 
-        self.projectiles = []
+        self.layer = layer
 
 
     def reset(self):
         pass
 
-
     def do_damage(self, enemies, *args):
+        # Do damage here
         return enemies
 
 
     def update(self, window, window_scale, playing_grid, dt):
         self.show(window, window_scale)
+
 
     def show(self, window, window_scale):
 
@@ -42,4 +41,3 @@ class Tower:
 
         # Show
         window.blit(t_img, pos)
-

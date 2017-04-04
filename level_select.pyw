@@ -41,7 +41,6 @@ def run(window_size, old_window):
 
     # User data
     user_data = pickle.load(open('user_data.dat', 'rb'))
-    print(user_data)
 
     while True:
 

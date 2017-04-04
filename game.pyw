@@ -191,6 +191,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
                 main_window.blit(surf, (0,0))
 
             main_window.blit(window, (0, y_change * window_size[1]))
+            tower_handler.show_desc(main_window, playing_grid)
             display.update()
 
             y_change -= y_change * 5 * dt
@@ -278,15 +279,16 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
         current_confetti = []
 
         # Update user progress
-        if state == 1:
+        if not restart:
+            if state == 1:
 
-            user_data = pickle.load(open('user_data.dat', 'rb'))
-            user_data['level'] += 1
+                user_data = pickle.load(open('user_data.dat', 'rb'))
+                user_data['level'] += 1
 
-            # Save file
-            file = open('user_data.dat', 'wb')
-            pickle.dump(user_data, file)
-            file.close()
+                # Save file
+                file = open('user_data.dat', 'wb')
+                pickle.dump(user_data, file)
+                file.close()
 
         window_y = window_size[1]
         while not restart:

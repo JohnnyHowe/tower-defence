@@ -4,13 +4,13 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block, machine_gun
+from towers import block, machine_gun, sniper
 
 
 class Tower_Handler:
 
     def __init__(self):
-        self.usable_towers = [block, machine_gun]
+        self.usable_towers = [block, machine_gun, sniper]
         self.towers = []
         self.blocks = []
 
@@ -35,6 +35,39 @@ class Tower_Handler:
         for tower in self.towers:
             tower.reset()
 
+    info_font = font.SysFont('arial', 18)
+    def show_desc(self, window, playing_grid):
+        mouse_pos = list(mouse_extras.get_pos())
+
+        # Is the mouse over the tower selection area?
+        if mouse_pos[1] >= playing_grid[1] - 1:
+
+            # Is it over an icon?
+            if mouse_pos[0] < len(self.usable_towers):
+
+                # Get info
+                tower_module = self.usable_towers[mouse_pos[0]]
+                name = tower_module.name
+                desc = tower_module.info
+
+                # Show Info
+                if key.get_pressed()[K_LSHIFT]: text = desc
+                else: text = name + ' $' + str(tower_module.Tower(None).cost)
+
+                message = self.info_font.render(text, 0, (255, 255, 255))
+                rect = message.get_rect()
+                mouse_pos = mouse.get_pos()
+
+                margin = 3
+                border = 2
+
+                rect1 = [mouse_pos[0], mouse_pos[1], rect.width + margin + border * 2, rect.height + margin + border * 2]
+                rect2 = [mouse_pos[0] + border, mouse_pos[1] + border, rect.width + margin, rect.height + margin]
+
+                draw.rect(window, (255, 255, 255), rect1)
+                draw.rect(window, (100, 100, 100), rect2)
+
+                window.blit(message, (mouse_pos[0] + margin, mouse_pos[1] + margin))
 
     def update_towers(self, window, window_scale, playing_grid, dt):
 
@@ -53,10 +86,8 @@ class Tower_Handler:
         self.towers = []
         self.blocks = []
 
-
     held_tower = None
     def tower_selection(self, window, window_scale, playing_grid, tower_select_rows, money):
-
         k = key.get_pressed()
 
         def draw_rect(colour):

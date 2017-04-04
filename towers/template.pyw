@@ -1,5 +1,9 @@
 from pygame import *
-img = None #image.load('images//')
+img = None #image.load('images//towers')
+layer = 0
+
+name = 'name'
+info = 'description'
 
 class Tower:
 
@@ -8,11 +12,14 @@ class Tower:
         self.pos = pos
         self.cost = 50
 
-        self.id = 'name'
-        self.info = 'description'
+        self.id = None
 
+        self.layer = layer
 
-    def do_damage(self, enemies):
+    def reset(self):
+        pass
+
+    def do_damage(self, enemies, *args):
         # Do damage here
         return enemies
 

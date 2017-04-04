@@ -4,6 +4,9 @@ import global_functions as gfunc
 img = image.load('images\\towers\\machine_gun_icon.png')
 layer = 1
 
+name = 'Machine Gun'
+info = 'Fast firing, low damage gun'
+
 bullet_img = image.load('images\\towers\\bullet.png')
 
 class Bullet:
@@ -14,6 +17,8 @@ class Bullet:
         self.angle = self.get_angle()
         self.speed = speed
         self.damage = 0.3
+
+        self.id = 'machine_gun'
 
         self.height = 0.3 # Multiplied by the window scale
 
