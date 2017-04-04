@@ -55,7 +55,7 @@ class Tower_Handler:
 
 
     held_tower = None
-    def tower_selection(self, window, window_scale, playing_grid, tower_select_rows):
+    def tower_selection(self, window, window_scale, playing_grid, tower_select_rows, money):
 
         k = key.get_pressed()
 
@@ -114,6 +114,7 @@ class Tower_Handler:
 
                 # Is there one to delete?
                 if del_tower_index != None:
+                    tower = self.towers[del_tower_index]
 
                     # Is it a block?
                     if self.towers[del_tower_index].id == 'block':
@@ -121,6 +122,7 @@ class Tower_Handler:
                         self.blocks.pop(index)
 
                     self.towers.pop(del_tower_index)
+                    money += tower.cost
 
 
 
@@ -145,7 +147,7 @@ class Tower_Handler:
             # Does the held tower need to be let go?
             if mouse_extras.get_states()[2] == -1 and not k[K_LSHIFT]:
                 self.held_tower = None
-                return
+                return money
 
             # Does it need to be placed?
             pos = mouse_extras.get_pos()
@@ -178,15 +180,23 @@ class Tower_Handler:
 
 
                 if okay:
-                    draw_rect((100, 255, 100))
-                    show_tower()
 
+                    if money >= self.held_tower.Tower(()).cost:
+                        draw_rect((100, 255, 100))
+                        show_tower()
+                    else:
+                        draw_rect((255, 100, 100))
+                        show_tower()
                     # Does the held tower need to be placed?
                     if mouse_extras.get_states()[0] == -1 or (mouse_extras.get_pressed()[0] and k[K_LSHIFT]):
 
-                        # Place the tower
+                        # Does the player have enough money
                         tower = self.held_tower.Tower(pos)
-                        self.towers.append(tower)
+                        if money >= tower.cost:
+
+                            # Place the tower
+                            self.towers.append(tower)
+                            money -= tower.cost
 
                         # Is it a block
                         if tower.id == 'block':
@@ -225,3 +235,5 @@ class Tower_Handler:
                     if index < len(self.usable_towers):
                         tower = self.usable_towers[index]
                         self.held_tower = tower
+
+        return money

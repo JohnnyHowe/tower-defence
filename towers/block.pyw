@@ -9,7 +9,7 @@ class Tower:
         self.layer = layer
 
         self.pos = pos
-        self.cost = 20
+        self.cost = 5
 
         self.id = 'block'
         self.info = 'Base for other towers, can be used to make the enemies path longer'

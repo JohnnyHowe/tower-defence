@@ -25,16 +25,23 @@ def run(window_size, old_window):
             return window, window_size, min(window_size)
 
 
-    def level_button(number, window, window_size, window_scale, pos, show = True):
-
+    def level_button(number, window, window_size, window_scale, pos, valid, show = True):
         height = window_scale * 0.15
-        if gfunc.text_button(window, window_size, (0,0), str(number), (255, 255, 255), (pos[0], pos[1], height, height), alignment = 'center'):
-            return True
+
+        if valid:
+            if gfunc.text_button(window, window_size, (0,0), str(number), (255, 255, 255), (pos[0], pos[1], height, height), alignment = 'center'):
+                return True
+        else:
+            gfunc.text_button(window, window_size, (0,0), str(number), (150, 150, 150), (pos[0], pos[1], height, height), alignment = 'center')
 
 
     level_info = pickle.load(open('levels.dat', 'rb'))
     levels = len(level_info)
     max_columns = 5
+
+    # User data
+    user_data = pickle.load(open('user_data.dat', 'rb'))
+    print(user_data)
 
     while True:
 
@@ -98,26 +105,29 @@ def run(window_size, old_window):
             else:
                 y *= y_dist
 
-
             y -= scroll
             level_num += 1
 
+            valid = user_data['level'] + 1 >= level_num
 
-            if level_button(level_num, window, window_size, window_scale, (x, y)):
+            if level_button(level_num, window, window_size, window_scale, (x, y), valid):
                 button_pressed = level_num
 
         if button_pressed:
             val, surf = game.run(button_pressed, levels, window_size, window)
+            user_data = pickle.load(open('user_data.dat', 'rb'))
 
             rect = surf.get_rect(); window_size = rect.width, rect.height
             screen = display.set_mode(window_size, RESIZABLE)
 
             if type(val) == int: game.run(val, levels, window_size, surf)
+            user_data = pickle.load(open('user_data.dat', 'rb'))
             continue
 
         while True:
             if type(ret) == int:
                 ret, new_window = game.run(button_pressed + 1, levels, window_size, new_window)
+                user_data = pickle.load(open('user_data.dat', 'rb'))
                 rect = new_window.get_rect(); window_size = rect.width, rect.height
             else: break
 

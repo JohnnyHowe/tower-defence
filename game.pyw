@@ -11,6 +11,11 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
     # Get level info
     level_info = pickle.load(open('levels.dat', 'rb'))[level]
+    money = level_info['start_money']
+
+    enemy_len = 0
+    for enemy in level_info['enemies']:
+        enemy_len += enemy[3]
 
     # Scale window correctly
     message_height = 1
@@ -132,7 +137,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             if k[K_RETURN] and enemy_handler.path: break
 
             # Does the game grid need to be cleared?
-            if k[K_c]: tower_handler.clear_towers()
+            if k[K_c]: tower_handler.clear_towers(); money = level_info['start_money']
 
             # Clear window(s)
             show_background(background)
@@ -142,7 +147,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             dt = clock.tick() / 1000
 
             # Update towers
-            tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows)
+            money = tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows, money)
 
             # Update path
             enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
@@ -151,6 +156,11 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             if enemy_handler.path:
                 gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.5, pos = ('mid', 'top'))
                 gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.3, pos = ('mid', 'low'), colour = (90, 90, 90))
+
+                colour = (70, 70, 70)
+                gfunc.show_message('Money: ' + str(money), message_surf, colour = colour, border = 0.3, pos = 'right', size = 0.4 * game_scale)
+                gfunc.show_message('Incoming Enemies: ' + str(enemy_len), message_surf, colour = colour, border = 0.3, pos = 'left', size = 0.4 * game_scale)
+
             else:
                 gfunc.show_message('It must be possible for the enemies to get through!', message_surf, colour = (red_value, 50, 0), border = 0.3)
 
@@ -236,7 +246,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             tower_handler.update_towers(game_window, game_scale, game_grid, dt)
 
             # Message board
-            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.7, border = 1)
+            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)
 
             # Fancy
             show_dev_things()
@@ -266,6 +276,17 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
         global current_confetti
         current_confetti = []
+
+        # Update user progress
+        if state == 1:
+
+            user_data = pickle.load(open('user_data.dat', 'rb'))
+            user_data['level'] += 1
+
+            # Save file
+            file = open('user_data.dat', 'wb')
+            pickle.dump(user_data, file)
+            file.close()
 
         window_y = window_size[1]
         while not restart:
