@@ -27,7 +27,7 @@ class Tower_Handler:
     def show_towers(self, window, window_scale):
 
         for tower in self.towers:
-            tower.show(window, window_scale)
+            tower.show(window, window_scale, 1)
 
 
     def reset(self):
@@ -87,7 +87,7 @@ class Tower_Handler:
         self.blocks = []
 
     held_tower = None
-    def tower_selection(self, window, window_scale, playing_grid, tower_select_rows, money):
+    def tower_selection(self, window, window_scale, playing_grid, tower_select_rows, money, dt):
         k = key.get_pressed()
 
         def draw_rect(colour):
@@ -159,7 +159,7 @@ class Tower_Handler:
 
         # Show placed towers
         for tower in self.towers:
-            tower.show(window, window_scale)
+            tower.show(window, window_scale, dt)
 
         # Show held tower
         if self.held_tower:

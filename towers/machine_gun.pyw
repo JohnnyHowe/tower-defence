@@ -24,7 +24,7 @@ class Bullet:
 
     def update(self, window, window_scale, dt):
         self.move(dt)
-        self.show(window, window_scale)
+        self.show(window, window_scale, dt)
 
 
     def move(self, dt):
@@ -64,7 +64,7 @@ class Bullet:
         return rect_list
 
 
-    def show(self, window, window_scale):
+    def show(self, window, window_scale, dt):
         img_rect = bullet_img.get_rect()
         scale = self.height * window_scale / min(img_rect.width, img_rect.height)
 
@@ -185,7 +185,7 @@ class Tower:
         self.aiming = False
 
 
-    def show(self, window, window_scale):
+    def show(self, window, window_scale, *args):
 
         # Scale images
         base = transform.scale(self.base_img, (int(window_scale), int(window_scale)))

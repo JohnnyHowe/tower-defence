@@ -28,7 +28,7 @@ class Tower:
         self.show(window, window_scale)
 
 
-    def show(self, window, window_scale):
+    def show(self, window, window_scale, dt):
 
         # Scale image
         t_img = transform.scale(img, (int(window_scale), int(window_scale)))
