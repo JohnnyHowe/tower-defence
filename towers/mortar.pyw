@@ -5,7 +5,7 @@ Don't stress, I stole it from myself - Johnny
 
 from pygame import *
 import global_functions as gfunc
-import math, time
+import math, time, random
 
 img = image.load('images\\towers\\mortar_icon.png')
 layer = 1
@@ -17,7 +17,7 @@ bullet_img = image.load('images\\towers\\bomb.png')
 
 class Bullet:
 
-    def __init__(self, pos, destination, speed = 20):
+    def __init__(self, pos, rot, destination, speed = 15):
         self.pos = list(pos)
         self.speed = speed
         self.dest = destination
@@ -25,13 +25,7 @@ class Bullet:
         self.dist = math.sqrt((pos[0] - destination[0]) ** 2 + (pos[1] - destination[1]) ** 2)
         self.dist2 = 0 # Distance travelled
 
-        # Work out slope
-        slope = [pos[0] - destination[0], pos[1] - destination[1]]
-        scale = -1 / sum(slope)
-
-        slope[0] *= scale
-        slope[1] *= scale
-        self.slope = slope
+        self.slope = gfunc.slope(rot)
 
         self.angle = self.get_angle()
         self.id = 'bomb'
@@ -44,8 +38,8 @@ class Bullet:
 
 
     def move(self, dt):
-        self.pos[0] += dt * self.speed * self.slope[0]
-        self.pos[1] += dt * self.speed * self.slope[1]
+        self.pos[0] -= dt * self.speed * self.slope[0]
+        self.pos[1] -= dt * self.speed * self.slope[1]
         dist = math.sqrt((dt * self.speed * self.slope[0]) ** 2 + (dt * self.speed * self.slope[1]) ** 2)
         self.dist2 += dist
 
@@ -89,7 +83,14 @@ class Bullet:
         width = img_rect.width * scale
         height = img_rect.height * scale
 
-        img = transform.scale(bullet_img, (int(width), int(height)))
+        max_show_height = self.dist * 0.3
+
+        x = 2 * (self.dist2 / self.dist) - 1
+        y = -x ** 2 + 1
+
+        size_add = y * max_show_height + 1
+
+        img = transform.scale(bullet_img, (int(width * size_add), int(height * size_add)))
         img = transform.rotate(img, self.angle)
 
         rect = self.get_rect(window_scale)
@@ -105,7 +106,7 @@ class Tower:
         self.layer = layer
 
         self.pos = pos
-        self.cost = 50
+        self.cost = 75
 
         self.id = 'name'
         self.info = 'description'
@@ -118,10 +119,19 @@ class Tower:
         self.aiming = False
 
         self.damage = 15
-        self.ex_range = 10
+        self.ex_range = 3
 
         self.time = 2
         self.last_shot = 0 #self.time
+
+        self.images = [
+            image.load('images//misc//explosion//1.png'),
+            image.load('images//misc//explosion//2.png'),
+            image.load('images//misc//explosion//3.png'),
+            image.load('images//misc//explosion//4.png'),
+            image.load('images//misc//explosion//5.png'),
+            image.load('images//misc//explosion//6.png'),
+        ]
 
         self.reset()
 
@@ -139,7 +149,7 @@ class Tower:
                 pos[0] += 0.5
                 pos[1] += 0.5
 
-                self.projectiles.append(Bullet(pos, self.aiming))
+                self.projectiles.append(Bullet(pos, self.rot, self.aiming))
 
 
     def update_bullets(self, window, window_scale, game_grid, dt):
@@ -158,6 +168,7 @@ class Tower:
         self.projectiles = []
         self.rot = 0
         self.explosions = []
+        self.last_shot = 0
 
 
     def do_damage(self, enemies, window_scale):
@@ -171,8 +182,8 @@ class Tower:
             if bullet.dist2 >= bullet.dist:
 
                 # Make an explosion
-                pos = bullet.dest
-                self.explosions.append([pos, 1])
+                pos = bullet.pos
+                self.explosions.append([pos, 1, random.randint(0, 4) * 90])
 
                 # Remove bomb
                 self.projectiles.pop(b_index)
@@ -247,13 +258,21 @@ class Tower:
 
     def show_external(self, window, window_scale, dt, *args):
 
+        time_between = 1 / len(self.images)
+
         # Show explosions
         for explosion in self.explosions:
             index = self.explosions.index(explosion)
 
+            img_index = int(explosion[1] * (len(self.images) - 1))
+            img = self.images[img_index]
+
+            size = window_scale * 2
+            img = transform.scale(img, (int(size), int(size)))
+            img = transform.rotate(img, explosion[2])
+
             pos = int(explosion[0][0] * window_scale), int(explosion[0][1] * window_scale)
+            window.blit(img, (pos[0] - size / 2, pos[1] - size / 2))
 
-            draw.circle(window, (200, 50, 50), pos, int(window_scale * self.ex_range * explosion[1]))
             self.explosions[index][1] -= dt * 5
-
             if self.explosions[index][1] < 0: self.explosions.pop(index)
