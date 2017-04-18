@@ -11,7 +11,7 @@ class Tower:
     def __init__(self, pos):
 
         self.pos = pos
-        self.cost = 100
+        self.cost = 150
 
         self.id = 'sniper'
         self.damage = 15

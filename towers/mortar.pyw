@@ -34,7 +34,6 @@ class Bullet:
 
     def update(self, window, window_scale, dt):
         self.move(dt)
-        self.show(window, window_scale, dt)
 
 
     def move(self, dt):
@@ -83,7 +82,7 @@ class Bullet:
         width = img_rect.width * scale
         height = img_rect.height * scale
 
-        max_show_height = self.dist * 0.3
+        max_show_height = self.dist * 0.05
 
         x = 2 * (self.dist2 / self.dist) - 1
         y = -x ** 2 + 1
@@ -121,7 +120,7 @@ class Tower:
         self.damage = 15
         self.ex_range = 3
 
-        self.time = 2
+        self.time = 1
         self.last_shot = 0 #self.time
 
         self.images = [
@@ -150,6 +149,7 @@ class Tower:
                 pos[1] += 0.5
 
                 self.projectiles.append(Bullet(pos, self.rot, self.aiming))
+                self.recoil = 1.5
 
 
     def update_bullets(self, window, window_scale, game_grid, dt):
@@ -169,6 +169,7 @@ class Tower:
         self.rot = 0
         self.explosions = []
         self.last_shot = 0
+        self.recoil = 0
 
 
     def do_damage(self, enemies, window_scale):
@@ -211,6 +212,8 @@ class Tower:
         self.update_bullets(window, window_scale, playing_grid, dt)
         self.show(window, window_scale, dt)
 
+        self.recoil = max(0, self.recoil - dt * 10)
+
 
     def aim(self, enemies):
         if len(enemies) > 0:
@@ -247,18 +250,27 @@ class Tower:
         rect = barrel.get_rect()
         offset = (window_scale - rect.width) / 2, (window_scale - rect.height) / 2
 
-        # Work out scaled pos
         pos = list(self.pos)
+
+        # Add recoil
+        scale = 0.2 * self.recoil
+        slope = gfunc.slope(self.rot)
+        xc = slope[0] * scale * window_scale
+        yc = slope[1] * scale * window_scale
+
+        # Work out scaled pos
         pos[0] *= window_scale
         pos[1] *= window_scale
 
         # Show
         window.blit(base, pos)
-        window.blit(barrel, (pos[0] + offset[0], pos[1] + offset[1]))
+        window.blit(barrel, (pos[0] + offset[0] + xc, pos[1] + offset[1] + yc))
 
     def show_external(self, window, window_scale, dt, *args):
-
         time_between = 1 / len(self.images)
+
+        for bullet in self.projectiles:
+            bullet.show(window, window_scale, dt)
 
         # Show explosions
         for explosion in self.explosions:

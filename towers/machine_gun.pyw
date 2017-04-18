@@ -97,6 +97,8 @@ class Tower:
         self.projectiles = []
 
         self.aiming = False
+        self.reset()
+
 
     last_shot = 0
     def shoot(self, dt):
@@ -114,6 +116,7 @@ class Tower:
                 pos[1] += 0.5
 
                 self.projectiles.append(Bullet(pos, gfunc.slope(self.rot - 180)))
+                self.recoil = 0.5
 
 
     def update_bullets(self, window, window_scale, game_grid, dt):
@@ -131,6 +134,7 @@ class Tower:
     def reset(self):
         self.projectiles = []
         self.rot = 0
+        self.recoil = 0
 
 
     def do_damage(self, enemies, window_scale):
@@ -158,7 +162,7 @@ class Tower:
         self.shoot(dt)
         self.update_bullets(window, window_scale, playing_grid, dt)
         self.show(window, window_scale)
-
+        self.recoil = max(0, self.recoil - dt * 5)
 
     def aim(self, enemies):
         if len(enemies) > 0:
@@ -203,6 +207,12 @@ class Tower:
         pos[0] *= window_scale
         pos[1] *= window_scale
 
+        # Add recoil
+        scale = 0.2 * self.recoil
+        slope = gfunc.slope(self.rot)
+        xc = slope[0] * scale * window_scale
+        yc = slope[1] * scale * window_scale
+
         # Show
         window.blit(base, pos)
-        window.blit(barrel, (pos[0] + offset[0], pos[1] + offset[1]))
+        window.blit(barrel, (pos[0] + offset[0] + xc, pos[1] + offset[1] + yc))

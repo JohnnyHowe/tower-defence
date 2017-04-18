@@ -231,6 +231,10 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             # Do important things
             dt = clock.tick() / 1000
 
+            # Update towers
+            tower_handler.update_towers(game_window, game_scale, game_grid, dt)
+            tower_handler.show_external(game_window, game_scale, dt)
+
             # Update enemies
             if enemy_handler.update_enemies(game_window, game_scale, game_grid, dt):
                 state = 0
@@ -242,10 +246,6 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
             # Do the damage
             enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
-
-            # Update towers
-            tower_handler.update_towers(game_window, game_scale, game_grid, dt)
-            tower_handler.show_external(game_window, game_scale, dt)
 
             # Message board
             gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)

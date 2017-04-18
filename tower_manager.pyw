@@ -4,13 +4,13 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block, machine_gun, sniper, mortar
+from towers import block, machine_gun, sniper, mortar, killing_floor
 
 
 class Tower_Handler:
 
     def __init__(self):
-        self.usable_towers = [block, machine_gun, sniper, mortar]
+        self.usable_towers = [block, killing_floor, machine_gun, sniper, mortar]
         self.towers = []
         self.blocks = []
 
@@ -200,17 +200,22 @@ class Tower_Handler:
                     if tower.layer == held_layer:
                         okay = False
 
-                for height in range(held_layer):
-
-                    base = False
-                    for tower in towers_in_slot:
-                        if tower.layer == height:
-                            base = True
-                            break
-
-                    if not base:
+                # Is it on the lowest layer? (Is it a base)
+                if held_layer == 0:
+                    if len(towers_in_slot) != 0:
                         okay = False
 
+                # Is it on 2nd layer (needs base)
+                if held_layer == 1:
+                    if len(towers_in_slot) != 1:
+                        okay = False
+
+                    # Is there something under it?
+                    if len(towers_in_slot) >= 1:
+
+                        # Is it not a block?
+                        if towers_in_slot[0].id != 'block':
+                            okay = False
 
                 if okay:
 

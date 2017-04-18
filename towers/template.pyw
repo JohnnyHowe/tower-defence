@@ -23,9 +23,11 @@ class Tower:
         # Do damage here
         return enemies
 
+    def show_exteranl(self, *args):
+        pass
 
     def update(self, window, window_scale, playing_grid, dt):
-        self.show(window, window_scale)
+        self.show(window, window_scale, dt)
 
 
     def show(self, window, window_scale, dt):
