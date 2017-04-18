@@ -17,12 +17,23 @@ bullet_img = image.load('images\\towers\\bomb.png')
 
 class Bullet:
 
-    def __init__(self, pos, slope, speed = 50):
+    def __init__(self, pos, destination, speed = 20):
         self.pos = list(pos)
-        self.slope = slope
-        self.angle = self.get_angle()
         self.speed = speed
+        self.dest = destination
 
+        self.dist = math.sqrt((pos[0] - destination[0]) ** 2 + (pos[1] - destination[1]) ** 2)
+        self.dist2 = 0 # Distance travelled
+
+        # Work out slope
+        slope = [pos[0] - destination[0], pos[1] - destination[1]]
+        scale = -1 / sum(slope)
+
+        slope[0] *= scale
+        slope[1] *= scale
+        self.slope = slope
+
+        self.angle = self.get_angle()
         self.id = 'bomb'
 
         self.height = 0.3 # Multiplied by the window scale
@@ -35,6 +46,8 @@ class Bullet:
     def move(self, dt):
         self.pos[0] += dt * self.speed * self.slope[0]
         self.pos[1] += dt * self.speed * self.slope[1]
+        dist = math.sqrt((dt * self.speed * self.slope[0]) ** 2 + (dt * self.speed * self.slope[1]) ** 2)
+        self.dist2 += dist
 
 
     def get_angle(self):
@@ -108,10 +121,10 @@ class Tower:
         self.ex_range = 10
 
         self.time = 2
+        self.last_shot = 0 #self.time
 
         self.reset()
 
-    last_shot = 0
     def shoot(self, dt):
         time = self.time
 
@@ -126,7 +139,7 @@ class Tower:
                 pos[0] += 0.5
                 pos[1] += 0.5
 
-                self.projectiles.append(Bullet(pos, gfunc.slope(self.rot - 180)))
+                self.projectiles.append(Bullet(pos, self.aiming))
 
 
     def update_bullets(self, window, window_scale, game_grid, dt):
@@ -148,44 +161,36 @@ class Tower:
 
 
     def do_damage(self, enemies, window_scale):
+
         self.aim(enemies)
 
-        for enemy in enemies:
-            enemy_rect = enemy.get_rect(window_scale)
+        for bullet in self.projectiles:
+            b_index = self.projectiles.index(bullet)
 
-            if enemy_rect:
+            # Has the bullet reached its destination?
+            if bullet.dist2 >= bullet.dist:
 
-                for bullet in self.projectiles:
-                    index = self.projectiles.index(bullet)
+                # Make an explosion
+                pos = bullet.dest
+                self.explosions.append([pos, 1])
 
-                    bullet_rect = bullet.get_rect(window_scale)
-                    center_pos = (bullet_rect[0] - bullet_rect[2] / 2) / window_scale, (bullet_rect[1] - bullet_rect[3] / 2) / window_scale
+                # Remove bomb
+                self.projectiles.pop(b_index)
 
-                    if gfunc.touching(bullet_rect, enemy_rect):
-                        # Explode!
+                # Do damage
+                for enemy in enemies:
 
-                        self.projectiles.pop(index)
-                        self.explosions.append([center_pos, 1])
+                    epos = enemy.get_pos()
+                    if epos:
 
-                        # Find all things close by
-                        ex_range = self.ex_range
+                        dist = math.sqrt((pos[0] - epos[0]) ** 2 + (pos[1] - epos[1]) ** 2)
+                        if dist <= self.ex_range:
+                            # Do damage
 
-                        for index in range(len(enemies)):
-                            enemy = enemies[index]
+                            dist_per = 1 - (dist / self.ex_range)
 
-                            pos = enemy.get_pos()
-
-                            if pos:
-                                pos[0] += 0.5
-                                pos[1] += 0.5
-
-                                dist = math.sqrt((pos[0] - center_pos[0]) ** 2 + (pos[1] - center_pos[1]) ** 2)
-                                # print((int(pos[0]), int(pos[1])), (int(center_pos[0]), int(center_pos[1])))
-
-                                if dist <= ex_range:
-                                    dp = dist / ex_range
-                                    damage = self.damage * (1 - dp)
-                                    enemies[index].health -= damage
+                            damage = dist_per * self.damage
+                            enemy.health -= damage
 
         return enemies
 
@@ -213,7 +218,7 @@ class Tower:
                 this_pos[1] += 0.5
 
                 self.rot = gfunc.get_rot(pos, this_pos)
-                self.aiming = True
+                self.aiming = pos
                 return
         self.aiming = False
 
@@ -252,8 +257,3 @@ class Tower:
             self.explosions[index][1] -= dt * 5
 
             if self.explosions[index][1] < 0: self.explosions.pop(index)
-
-            print('ye')
-
-
-
