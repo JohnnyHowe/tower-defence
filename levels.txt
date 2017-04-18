@@ -23,7 +23,7 @@
 		],
 		
 	'start_money': 1000,
-	'grid_size': (32, 14),
+	'grid_size': (100, 50),
 	'background': (230, 230, 230),
 	},
 }

@@ -82,7 +82,7 @@ class Bullet:
         width = img_rect.width * scale
         height = img_rect.height * scale
 
-        max_show_height = self.dist * 0.05
+        max_show_height = self.dist * 0.025
 
         x = 2 * (self.dist2 / self.dist) - 1
         y = -x ** 2 + 1

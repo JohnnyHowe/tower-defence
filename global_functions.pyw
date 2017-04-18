@@ -94,7 +94,10 @@ def pause(old_window, window_size, window_offset, offset):
 
         display.update()
 
-
+def fix_angle(a):
+    a -= int(a / 360) * 360
+    if a < 0: a += 360
+    return a
 
 def slope(angle):
 

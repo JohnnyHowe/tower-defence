@@ -233,7 +233,6 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
             # Update towers
             tower_handler.update_towers(game_window, game_scale, game_grid, dt)
-            tower_handler.show_external(game_window, game_scale, dt)
 
             # Update enemies
             if enemy_handler.update_enemies(game_window, game_scale, game_grid, dt):
@@ -243,6 +242,8 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             if enemy_handler.enemies == []:
                 state = 1
                 break
+
+            tower_handler.show_external(game_window, game_scale, dt)
 
             # Do the damage
             enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
