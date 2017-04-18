@@ -124,6 +124,9 @@ class Tower:
                 return
         self.aiming = False
 
+    def show_external(self, window, window_scale, dt):
+        self.show_shot(window, window_scale, dt)
+
     def update(self, window, window_scale, playing_grid, dt):
         self.show(window, window_scale, dt)
         self.shoot(dt, playing_grid, window_scale)
@@ -142,9 +145,6 @@ class Tower:
 
         # Show
         window.blit(base_img, pos)
-
-        # Show shot
-        self.show_shot(window, window_scale, dt)
 
         # Show gun
         center_pos = pos[0] + window_scale / 2, pos[1] + window_scale / 2

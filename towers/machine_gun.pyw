@@ -24,8 +24,6 @@ class Bullet:
 
     def update(self, window, window_scale, dt):
         self.move(dt)
-        self.show(window, window_scale, dt)
-
 
     def move(self, dt):
         self.pos[0] += dt * self.speed * self.slope[0]
@@ -167,7 +165,6 @@ class Tower:
 
             # Aim at first
             enemy = enemies[0]
-
             pos = enemy.get_pos()
 
             if pos:
@@ -184,6 +181,9 @@ class Tower:
                 return
         self.aiming = False
 
+    def show_external(self, window, window_scale, dt, *args):
+        for bullet in self.projectiles:
+            bullet.show(window, window_scale, dt)
 
     def show(self, window, window_scale, *args):
 

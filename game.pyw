@@ -245,6 +245,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
             # Update towers
             tower_handler.update_towers(game_window, game_scale, game_grid, dt)
+            tower_handler.show_external(game_window, game_scale, dt)
 
             # Message board
             gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)
@@ -315,7 +316,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             dt = clock.tick() / 1000
 
             # Show towers
-            tower_handler.show_towers(game_window, game_scale)
+            tower_handler.show_towers(game_window, game_scale, dt)
 
             # Update enemies
             enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
@@ -517,7 +518,6 @@ def win_window(window, window_size, window_offset, offset, dt, next):
     header_message = new_font.render(header, 0, text_colour)
 
     window.blit(header_message, (window_rect[0] + margin_x, window_rect[1] + margin_y))
-
 
     # Buttons
     width = 175 * scale

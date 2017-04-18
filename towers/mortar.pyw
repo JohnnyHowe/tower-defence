@@ -240,6 +240,8 @@ class Tower:
         window.blit(base, pos)
         window.blit(barrel, (pos[0] + offset[0], pos[1] + offset[1]))
 
+    def show_external(self, window, window_scale, dt, *args):
+
         # Show explosions
         for explosion in self.explosions:
             index = self.explosions.index(explosion)
@@ -250,6 +252,8 @@ class Tower:
             self.explosions[index][1] -= dt * 5
 
             if self.explosions[index][1] < 0: self.explosions.pop(index)
+
+            print('ye')
 
 
 

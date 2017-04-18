@@ -24,10 +24,12 @@ class Tower_Handler:
         return enemies
 
 
-    def show_towers(self, window, window_scale):
+    def show_towers(self, window, window_scale, dt):
 
         for tower in self.towers:
             tower.show(window, window_scale, 1)
+
+        self.show_external(window, window_scale, dt)
 
 
     def reset(self):
@@ -268,3 +270,8 @@ class Tower_Handler:
                         self.held_tower = tower
 
         return money
+
+    def show_external(self, window, window_scale, dt):
+
+        for tower in self.towers:
+            tower.show_external(window, window_scale, dt)
