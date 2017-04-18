@@ -388,7 +388,7 @@ def death_window(window, window_size, window_offset, offset):
     draw.rect(window, background_colour, window_rect)
 
     # Show header and get scale etc
-    header = "You suck!"
+    header = "Not So Good Job"
 
     max_width = width - margin_x * 2
     max_height = height - margin_y * 2
@@ -408,13 +408,13 @@ def death_window(window, window_size, window_offset, offset):
 
 
     # Buttons
-    width = 175 * scale
+    width = 10000 * scale
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
     # Height ratios
     heights = [1, 1]
-    max_height = 100 * scale
-    margin = 0.05
+    max_height = 200 * scale
+    margin = 0.0001
 
     # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
 
@@ -433,7 +433,7 @@ def death_window(window, window_size, window_offset, offset):
 
         height = heights[index]
 
-        y = window_rect[1] + window_rect[3] * 0.6 + y_height
+        y = window_rect[1] + window_rect[3] * 0.4 + y_height + height# * 0.5
         y_height += height
 
         g_value = 220
@@ -500,7 +500,7 @@ def win_window(window, window_size, window_offset, offset, dt, next):
 
 
     # Show header and get scale etc
-    header = "You Don't Suck!"
+    header = "Good Job!"
 
     max_width = width - margin_x * 2
     max_height = height - margin_y * 2
@@ -524,13 +524,13 @@ def win_window(window, window_size, window_offset, offset, dt, next):
     # restart = gfunc.text_button(window, window_size, window_offset, 'Restart', text_colour + (200,), (window_rect[0] + (window_rect[2] - width) / 2, window_rect[1] + window_rect[3] * 0.6, width, height))
 
     # Height ratios
-    max_height = scale * 1000
+    max_height = scale * 100
     margin = 0.0
 
     # draw.rect(window, (100, 100, 255), (window_rect[0], window_rect[1] + window_rect[3] - max_height, window_rect[2], max_height))
 
     # Just makes it easy to loop through
-    if next: buttons = [('Next level', 'next'), ('Restart', 'restart'), ('Menu', 'menu')]; heights = [2, 0.1, 0.1]
+    if next: buttons = [('Next level', 'next'), ('Restart', 'restart'), ('Menu', 'menu')]; heights = [0.1, 0.1, 0.1]
     else: buttons = [('Menu', 'menu'), ('Restart', 'restart')]; heights = [2, 2]
 
     # Make ratio add to 1
@@ -545,8 +545,6 @@ def win_window(window, window_size, window_offset, offset, dt, next):
         height = heights[index]
 
         y_height = (index / len(buttons) * min(window_size)) * 0.2
-
-
         y = window_rect[1] + window_rect[3] * 0.6 + y_height
 
         g_value = 220

@@ -4,13 +4,13 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block, machine_gun, sniper
+from towers import block, machine_gun, sniper, mortar
 
 
 class Tower_Handler:
 
     def __init__(self):
-        self.usable_towers = [block, machine_gun, sniper]
+        self.usable_towers = [block, machine_gun, sniper, mortar]
         self.towers = []
         self.blocks = []
 
