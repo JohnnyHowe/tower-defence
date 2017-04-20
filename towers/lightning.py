@@ -15,7 +15,7 @@ class Tower:
     def __init__(self, pos):
 
         self.pos = pos
-        self.cost = 50
+        self.cost = 75
 
         self.id = 'lightning'
         self.layer = layer
@@ -39,7 +39,7 @@ class Tower:
                 dist = math.sqrt((pos[0] - self.pos[0]) ** 2 + (pos[1] - self.pos[1]) ** 2)
 
                 if dist < 1.5:
-                    enemy.health -= 0.001 * dt
+                    enemy.health -= 0.002 * dt
 
         return enemies
 
