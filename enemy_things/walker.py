@@ -15,6 +15,7 @@ class Enemy:
         self.health = self.max_health
 
         self.dead = False
+        self.path = []
 
         # Negative distance will be treated as the time left until the enemy will spawn
         self.dist = -time_until_spawn
