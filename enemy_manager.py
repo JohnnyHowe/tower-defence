@@ -12,7 +12,6 @@ class Enemy_Handler:
         self.enemies = []
         self.added_money = 0
 
-
     def update_enemies(self, window, window_scale, playing_grid, dt, money):
 
         finished = False

@@ -126,13 +126,13 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             state = 1
 
         for enemies in level_info['enemies']:
-            enemy_handler.load_enemies(enemies)
-
             if dead: break
 
             enemy_len = 0
             for enemy in enemies:
                 enemy_len += enemy[3]
+
+            enemy_handler.load_enemies(enemies)
 
             complete = False
             while not complete:
@@ -237,7 +237,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
                     message_surf.fill((150, 150, 150))
 
                     # Do we want to restart the game?
-                    if key.get_pressed()[K_r]:
+                    if key.get_pressed()[K_r] and False:
                         enemy_handler.load_enemies(enemies)
                         money -= enemy_handler.added_money
                         enemy_handler.added_money = 0

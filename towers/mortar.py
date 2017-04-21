@@ -17,7 +17,7 @@ bullet_img = image.load('images\\towers\\bomb.png')
 
 class Bullet:
 
-    def __init__(self, pos, rot, destination, speed = 15):
+    def __init__(self, pos, rot, destination, speed = 12):
         self.pos = list(pos)
         self.speed = speed
         self.dest = destination

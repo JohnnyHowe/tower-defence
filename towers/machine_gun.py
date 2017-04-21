@@ -86,7 +86,7 @@ class Tower:
         self.layer = layer
 
         self.pos = pos
-        self.cost = 50
+        self.cost = 30
 
         self.id = 'name'
         self.info = 'description'

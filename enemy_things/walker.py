@@ -29,7 +29,6 @@ class Enemy:
         self.show(window, window_scale)
         self.update_death()
 
-
     def update_death(self):
 
         if self.health <= 0:
