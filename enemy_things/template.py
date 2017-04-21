@@ -7,6 +7,7 @@ class Enemy:
     def __init__(self, scale, speed, time_until_spawn):
 
         self.id = ''
+        self.money = 0
 
         self.speed = speed
         self.scale = scale
@@ -15,6 +16,7 @@ class Enemy:
         self.health = self.max_health
 
         self.dead = False
+        self.path = []
 
         # Negative distance will be treated as the time left until the enemy will spawn
         self.dist = -time_until_spawn

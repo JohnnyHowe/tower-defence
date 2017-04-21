@@ -12,7 +12,7 @@
 		('walker', 1, 5, 15, 0, 0.1),
 		('walker', 1, 5, 15, 0, 0.075),
 		],[
-		('walker', 1, 3, 2, 0, 1),
+		('sprinter', 1, 12, 10, 0, 0.1),
 		]
 		],
 		
@@ -26,7 +26,9 @@
 	
 		# ('Name', scale, speed, amount, Time until first spawn, Time between spawns)
 		
-		('walker', 1, 5, 100, 0, 0.7),
+		[
+		('walker', 1, 10, 2, 0, 1),
+		],
 		],
 		
 	'start_money': 500,

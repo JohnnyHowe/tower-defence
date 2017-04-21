@@ -109,6 +109,8 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
     if type(level_info['background']) == tuple: show_background = show_background_colour; background = level_info['background']
     else: show_background = show_background_image; background = image.load(level_info['background'])
 
+    state = 1
+
     # Path message
     red_value = 255
     last_red_change = -1
@@ -117,6 +119,11 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
     while True:
         paused = 0
         dead = False
+
+        if state == 0:
+            money -= enemy_handler.added_money
+            enemy_handler.added_money = 0
+            state = 1
 
         for enemies in level_info['enemies']:
             enemy_handler.load_enemies(enemies)
@@ -127,158 +134,166 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             for enemy in enemies:
                 enemy_len += enemy[3]
 
-            # Set up loop (game)
-            while True:
+            complete = False
+            while not complete:
+                if dead: break
 
-                # Must be at start
-                offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
-                window = Surface(window_size)
-                mouse_extras.update(game_scale, playing_grid, offset)
-                message_surf = Surface((game_size[0], math.ceil(game_scale)))
-                gfunc.update_keys(key)
+                # Set up loop (game)
+                while True:
 
-                # Does the game need to progress to the next stage?
-                k = key.get_pressed()
-                if k[K_RETURN] and enemy_handler.path: break
+                    # Must be at start
+                    offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                    window = Surface(window_size)
+                    mouse_extras.update(game_scale, playing_grid, offset)
+                    message_surf = Surface((game_size[0], math.ceil(game_scale)))
+                    gfunc.update_keys(key)
 
-                # Does the game grid need to be cleared?
-                if k[K_c]: tower_handler.clear_towers(); money = level_info['start_money']
+                    # Does the game need to progress to the next stage?
+                    k = key.get_pressed()
+                    if k[K_RETURN] and enemy_handler.path: break
 
-                # Clear window(s)
-                show_background(background)
-                message_surf.fill((150, 150, 150))
+                    # Does the game grid need to be cleared?
+                    if k[K_c]: tower_handler.clear_towers(); money = level_info['start_money']
 
-                # Do important things
-                dt = clock.tick() / 1000
+                    # Clear window(s)
+                    show_background(background)
+                    message_surf.fill((150, 150, 150))
 
-                # Update towers
-                money = tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows, money, dt)
+                    # Do important things
+                    dt = clock.tick() / 1000
 
-                # Update path
-                enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
+                    # Update towers
+                    money = tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows, money, dt)
 
-                # Show message
-                if enemy_handler.path:
-                    gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.5, pos = ('mid', 'top'))
-                    gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.3, pos = ('mid', 'low'), colour = (90, 90, 90))
+                    # Update path
+                    enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
 
-                    colour = (70, 70, 70)
-                    gfunc.show_message('Money: ' + str(money), message_surf, colour = colour, border = 0.3, pos = 'right', size = 0.4 * game_scale)
-                    gfunc.show_message('Incoming Enemies: ' + str(enemy_len), message_surf, colour = colour, border = 0.3, pos = 'left', size = 0.4 * game_scale)
+                    # Show message
+                    if enemy_handler.path:
+                        gfunc.show_message('Build stage!', message_surf, size = game_scale * 0.5, pos = ('mid', 'top'))
+                        gfunc.show_message('Press enter to start the wave!', message_surf, size = game_scale * 0.3, pos = ('mid', 'low'), colour = (90, 90, 90))
 
-                else:
-                    gfunc.show_message('It must be possible for the enemies to get through!', message_surf, colour = (red_value, 50, 0), border = 0.3)
+                        colour = (70, 70, 70)
+                        gfunc.show_message('Money: ' + str(money), message_surf, colour = colour, border = 0.3, pos = 'right', size = 0.4 * game_scale)
+                        gfunc.show_message('Incoming Enemies: ' + str(enemy_len), message_surf, colour = colour, border = 0.3, pos = 'left', size = 0.4 * game_scale)
 
-                    # Make the error message change colour for a cool animation
-                    red_value += last_red_change * dt * 500
-                    red_value = max(min(255, red_value), 150)
-                    if red_value >= 255 or red_value <= 150: last_red_change = -last_red_change
+                    else:
+                        gfunc.show_message('It must be possible for the enemies to get through!', message_surf, colour = (red_value, 50, 0), border = 0.3)
 
-                # Pause button
-                val = pause(window_size)
+                        # Make the error message change colour for a cool animation
+                        red_value += last_red_change * dt * 500
+                        red_value = max(min(255, red_value), 150)
+                        if red_value >= 255 or red_value <= 150: last_red_change = -last_red_change
 
-                if val:
-                    if val[0] == 'done':
-                        y_change = 0
-                        window_size = val[1]
-                        offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
-                        continue
-                    else: return val
+                    # Pause button
+                    val = pause(window_size)
 
-                # Must be at end
-                window.fill((30, 30, 30))
-                show_dev_things()
-                window.blit(game_window, offset)
-                window.blit(message_surf, (offset[0], offset[1] - game_scale))
+                    if val:
+                        if val[0] == 'done':
+                            y_change = 0
+                            window_size = val[1]
+                            offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                            continue
+                        else: return val
 
-                if y_change != 0.0:
-                    surf = transform.scale(old_window, window_size)
-                    main_window.blit(surf, (0,0))
+                    # Must be at end
+                    window.fill((30, 30, 30))
+                    show_dev_things()
+                    window.blit(game_window, offset)
+                    window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
-                main_window.blit(window, (0, y_change * window_size[1]))
-                tower_handler.show_desc(main_window, playing_grid)
-                display.update()
+                    if y_change != 0.0:
+                        surf = transform.scale(old_window, window_size)
+                        main_window.blit(surf, (0,0))
 
-                y_change -= y_change * 5 * dt
-                if y_change > -0.0001: y_change = 0
+                    main_window.blit(window, (0, y_change * window_size[1]))
+                    tower_handler.show_desc(main_window, playing_grid)
+                    display.update()
 
-            enemy_handler.set_enemy_path()
-            y_change = 0
+                    y_change -= y_change * 5 * dt
+                    if y_change > -0.0001: y_change = 0
 
-            # --------------------------------------------
-            # Fight!
-            # --------------------------------------------
+                enemy_handler.set_enemy_path()
+                y_change = 0
 
-            restart = False
-            tower_handler.reset()
+                # --------------------------------------------
+                # Fight!
+                # --------------------------------------------
 
-            offset, window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                restart = False
+                tower_handler.reset()
 
-            while not restart:
+                offset, window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
 
-                # Must be at start
-                offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
-                mouse_extras.update(game_scale, playing_grid, offset)
-                message_surf = Surface((game_size[0], math.ceil(game_scale)))
+                while not restart:
 
-                 # Clear/set up window(s)
-                show_background(background)
-                message_surf.fill((150, 150, 150))
+                    # Must be at start
+                    offset, window, window_size, game_window, game_size, game_scale = resize(window_size, window, game_window, game_size)
+                    mouse_extras.update(game_scale, playing_grid, offset)
+                    message_surf = Surface((game_size[0], math.ceil(game_scale)))
 
-                # Do we want to restart the game?
-                if key.get_pressed()[K_r]:
-                    enemy_handler.load_enemies(enemies)
-                    restart = True
-                    break
+                     # Clear/set up window(s)
+                    show_background(background)
+                    message_surf.fill((150, 150, 150))
 
-                tower_handler.draw_selection_block(game_window, game_scale, game_grid, tower_select_rows)
+                    # Do we want to restart the game?
+                    if key.get_pressed()[K_r]:
+                        enemy_handler.load_enemies(enemies)
+                        money -= enemy_handler.added_money
+                        enemy_handler.added_money = 0
+                        restart = True
+                        break
 
-                # Do important things
-                dt = clock.tick() / 1000
+                    tower_handler.draw_selection_block(game_window, game_scale, game_grid, tower_select_rows)
 
-                # Update towers
-                tower_handler.update_towers(game_window, game_scale, game_grid, dt)
+                    # Do important things
+                    dt = clock.tick() / 1000
 
-                # Update enemies
-                if enemy_handler.update_enemies(game_window, game_scale, game_grid, dt):
-                    state = 0
-                    dead = True
-                    print('1')
-                    break
+                    # Update towers
+                    tower_handler.update_towers(game_window, game_scale, game_grid, dt)
 
-                if enemy_handler.enemies == []:
-                    state = 1
-                    break
+                    # Update enemies
+                    fin, money = enemy_handler.update_enemies(game_window, game_scale, game_grid, dt, money)
 
-                tower_handler.show_external(game_window, game_scale, dt)
+                    if fin:
+                        state = 0
+                        dead = True
+                        break
 
-                # Do the damage
-                enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
+                    if enemy_handler.enemies == []:
+                        complete = True
+                        break
 
-                # Message board
-                gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)
+                    tower_handler.show_external(game_window, game_scale, dt)
 
-                # Fancy
-                show_dev_things()
+                    # Do the damage
+                    enemy_handler.enemies = tower_handler.do_damage(enemy_handler.enemies, game_scale)
 
-                # Must be at end
-                window.fill((30, 30, 30))
-                window.blit(game_window, offset)
-                window.blit(message_surf, (offset[0], offset[1] - game_scale))
+                    # Message board
+                    gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)
+                    gfunc.show_message('Money: ' + str(money), message_surf, colour = (70, 70, 70), border = 0.3, pos = 'right', size = 0.4 * game_scale)
 
-                # Pause button
-                gfunc.update_keys(key)
-                val = pause(window_size)
+                    # Fancy
+                    show_dev_things()
 
-                if val:
-                    if val[0] == 'done':
-                        y_change = 0
-                        window_size = val[1]
-                        offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
-                        continue
-                    else: return val
+                    # Must be at end
+                    window.fill((30, 30, 30))
+                    window.blit(game_window, offset)
+                    window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
-                display.update()
+                    # Pause button
+                    gfunc.update_keys(key)
+                    val = pause(window_size)
+
+                    if val:
+                        if val[0] == 'done':
+                            y_change = 0
+                            window_size = val[1]
+                            offset, main_window, window_size, game_window, game_size, game_scale = resize(window_size, main_window, game_window, game_size)
+                            continue
+                        else: return val
+
+                    display.update()
 
         # ----------------------------
         # Final screen
@@ -313,7 +328,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
             # Do we want to restart the game?
             if key.get_pressed()[K_r]:
-                enemy_handler.load_enemies(level_info['enemies'])
+                enemy_handler.load_enemies(enemies)
                 restart = True
                 break
 
@@ -327,7 +342,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             tower_handler.show_towers(game_window, game_scale, dt)
 
             # Update enemies
-            enemy_handler.update_enemies(game_window, game_scale, game_grid, dt)
+            enemy_handler.update_enemies(game_window, game_scale, game_grid, dt, money)
 
             # Show death window
             if state == 0:
@@ -371,6 +386,10 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
             window_y = max(window_y, max_height)
 
+            # Message board
+            gfunc.show_message('Enemies left: ' + str(len(enemy_handler.enemies)), message_surf, pos = 'left', size = game_scale * 0.4, border = 1)
+            gfunc.show_message('Money: ' + str(money), message_surf, colour = (70, 70, 70), border = 0.3, pos = 'right', size = 0.4 * game_scale)
+
             # Must be at end
             window.fill((30, 30, 30))
             show_dev_things()
@@ -378,6 +397,10 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
             window.blit(message_surf, (offset[0], offset[1] - game_scale))
 
             display.update()
+
+        money = level_info['start_money']
+        enemy_handler.added_money = 0
+        tower_handler.clear_towers()
 
 
 base_font = font.SysFont('arial', 100)

@@ -121,7 +121,7 @@ class Tower:
         self.ex_range = 3
 
         self.time = 1
-        self.last_shot = 0 #self.time
+        self.reset()
 
         self.images = [
             image.load('images//misc//explosion//1.png'),
@@ -132,7 +132,6 @@ class Tower:
             image.load('images//misc//explosion//6.png'),
         ]
 
-        self.reset()
 
     def shoot(self, dt):
         time = self.time
@@ -168,7 +167,7 @@ class Tower:
         self.projectiles = []
         self.rot = 0
         self.explosions = []
-        self.last_shot = 0
+        self.last_shot = random.random() * self.time
         self.recoil = 0
 
 

@@ -1,12 +1,13 @@
 from pygame import *
 import global_functions as gfunc
-import math
+import math, time
 
 class Enemy:
 
     def __init__(self, scale, speed, time_until_spawn):
 
         self.id = 'sprint'
+        self.money = 10
 
         self.speed = speed
         self.scale = scale
@@ -15,6 +16,7 @@ class Enemy:
         self.health = self.max_health
 
         self.dead = False
+        self.path = []
 
         # Negative distance will be treated as the time left until the enemy will spawn
         self.dist = -time_until_spawn
@@ -59,7 +61,7 @@ class Enemy:
     # Enable the enemy to move
     def move(self, dt):
         if self.dist >= 0: self.dist += dt * self.speed
-        else: self.dist += dt * 1000
+        else: self.dist += dt
 
     # Change the distance integer to a position on the path
     def get_pos(self, dist = None):

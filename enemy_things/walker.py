@@ -1,12 +1,13 @@
 from pygame import *
 import global_functions as gfunc
-import math
+import math, time
 
 class Enemy:
 
     def __init__(self, scale, speed, time_until_spawn):
 
         self.id = 'walker'
+        self.money = 5
 
         self.speed = speed
         self.scale = scale
@@ -112,3 +113,4 @@ class Enemy:
 
             # Show
             window.blit(img, pos)
+

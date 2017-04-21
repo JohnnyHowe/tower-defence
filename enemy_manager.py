@@ -1,6 +1,7 @@
 from pygame import *
 from enemy_things import path_finder
 import global_functions as gfunc
+import time
 
 # Import enemies
 from enemy_things import walker, sprinter
@@ -9,11 +10,13 @@ class Enemy_Handler:
 
     def __init__(self):
         self.enemies = []
+        self.added_money = 0
 
 
-    def update_enemies(self, window, window_scale, playing_grid, dt):
+    def update_enemies(self, window, window_scale, playing_grid, dt, money):
 
         finished = False
+        extra_money = 0
 
         temp = []
         for enemy in self.enemies:
@@ -30,15 +33,22 @@ class Enemy_Handler:
                         temp.append(enemy)
                     else:
                         finished = True
+
+                else: # Dead
+                    extra_money += enemy.money
+
+
             else:
                 temp.append(enemy)
 
+        money += extra_money
+        self.added_money += extra_money
 
         for enemy in self.enemies:
             enemy.show_health(window, window_scale)
 
         self.enemies = temp
-        return finished
+        return finished, money
 
 
     def set_enemy_path(self):

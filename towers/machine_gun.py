@@ -1,5 +1,6 @@
 from pygame import *
 import global_functions as gfunc
+import random
 
 img = image.load('images\\towers\\machine_gun_icon.png')
 layer = 1
@@ -11,13 +12,12 @@ bullet_img = image.load('images\\towers\\bullet.png')
 
 class Bullet:
 
-    def __init__(self, pos, slope, speed = 50):
+    def __init__(self, pos, slope, speed = 35):
         self.pos = list(pos)
         self.slope = slope
         self.angle = self.get_angle()
         self.speed = speed
         self.damage = 0.3
-
 
         self.id = 'machine_gun'
 
@@ -100,15 +100,15 @@ class Tower:
         self.aiming = False
         self.reset()
 
+        self.time = 1
+        self.last_shot = random.random() * self.time
 
-    last_shot = 0
     def shoot(self, dt):
-        time = 1.0
 
         self.last_shot += dt * 10
 
-        if self.last_shot >= time:
-            self.last_shot -= time
+        if self.last_shot >= self.time:
+            self.last_shot -= self.time
 
             if self.rot and self.aiming:
 

@@ -1,5 +1,6 @@
 from pygame import *
 import global_functions as gfunc
+import random
 img = image.load('images//towers//sniper_icon.png')
 layer = 1
 
@@ -30,7 +31,8 @@ class Tower:
         self.recoil = 0
         self.shots = []
         self.points = [self.pos]
-        self.last_time = 0
+        self.max_time = 1
+        self.last_time = random.random() * self.max_time
         self.projectiles = []
 
     def show_shot(self, window, window_scale, dt):
@@ -51,11 +53,11 @@ class Tower:
     def shoot(self, dt, game_size, game_scale):
 
         self.last_time += dt
-        if self.last_time >= 1:
+        if self.last_time >= self.max_time:
 
             if self.aiming:
 
-                self.last_time -= 1
+                self.last_time -= self.max_time
 
                 # Shoot
                 self.recoil = game_scale * 0.1

@@ -4,12 +4,12 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block, machine_gun, sniper, mortar, killing_floor, lightning
+from towers import block, machine_gun, sniper, mortar, killing_floor, lightning, op
 
 class Tower_Handler:
 
     def __init__(self):
-        self.tower_names = ['block', 'killing_floor', 'machine_gun', 'sniper', 'mortar', 'lightning']
+        self.tower_names = ['block', 'killing_floor', 'machine_gun', 'sniper', 'mortar', 'lightning', 'op']
         self.usable_towers = []
         for tower in self.tower_names: self.usable_towers.append(eval(tower))
 
@@ -238,9 +238,9 @@ class Tower_Handler:
                             self.towers.append(tower)
                             money -= tower.cost
 
-                        # Is it a block
-                        if tower.id == 'block':
-                            self.blocks.append(tower)
+                            # Is it a block
+                            if tower.id == 'block':
+                                self.blocks.append(tower)
 
                         # Should the tower still be held on to?
                         if not key.get_pressed()[K_LSHIFT]:
