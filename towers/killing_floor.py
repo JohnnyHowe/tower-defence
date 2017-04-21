@@ -17,6 +17,7 @@ class Tower:
         self.damage = 0.001
 
         self.layer = layer
+        self.projectiles = []
 
     def reset(self):
         pass

@@ -6,11 +6,13 @@ import math
 # Import towers
 from towers import block, machine_gun, sniper, mortar, killing_floor, lightning
 
-
 class Tower_Handler:
 
     def __init__(self):
-        self.usable_towers = [block, killing_floor, machine_gun, sniper, mortar, lightning]
+        self.tower_names = ['block', 'killing_floor', 'machine_gun', 'sniper', 'mortar', 'lightning']
+        self.usable_towers = []
+        for tower in self.tower_names: self.usable_towers.append(eval(tower))
+
         self.towers = []
         self.blocks = []
 

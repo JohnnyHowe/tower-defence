@@ -18,6 +18,7 @@ class Bullet:
         self.speed = speed
         self.damage = 0.3
 
+
         self.id = 'machine_gun'
 
         self.height = 0.3 # Multiplied by the window scale

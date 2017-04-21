@@ -6,12 +6,12 @@ class Enemy:
 
     def __init__(self, scale, speed, time_until_spawn):
 
-        self.id = 'walker'
+        self.id = 'sprint'
 
         self.speed = speed
         self.scale = scale
 
-        self.max_health = 10
+        self.max_health = 5
         self.health = self.max_health
 
         self.dead = False
@@ -20,7 +20,7 @@ class Enemy:
         self.dist = -time_until_spawn
 
         # Load image
-        self.image = image.load('images\\enemies\\walker.png')
+        self.image = transform.flip(image.load('images\\enemies\\sprinter.png'), True, False)
 
     def update(self, window, window_scale, dt):
         self.move(dt)
@@ -58,9 +58,8 @@ class Enemy:
 
     # Enable the enemy to move
     def move(self, dt):
-
         if self.dist >= 0: self.dist += dt * self.speed
-        else: self.dist += dt
+        else: self.dist += dt * 1000
 
     # Change the distance integer to a position on the path
     def get_pos(self, dist = None):

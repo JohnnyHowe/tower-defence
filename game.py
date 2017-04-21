@@ -1,9 +1,11 @@
 from pygame import *
-import pickle, math, mouse_extras, tower_manager, enemy_manager, random
+import pickle, math, mouse_extras, enemy_manager, random
 import global_functions as gfunc
 import time as Time
 
 def run(level, max_levels, window_size, old_window, y_change = -1):
+
+    import tower_manager
 
     # Set up
     main_window = display.set_mode(window_size, RESIZABLE)
@@ -114,15 +116,14 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
     red_value = 255
     last_red_change = -1
 
-    enemy_handler.load_enemies(level_info['enemies'])
-
     # Game loop (loop through the stages)
     while True:
 
         paused = 0
+        enemy_handler.load_enemies(level_info['enemies'])
+
 
         # Set up loop (game)
-        enemy_handler.load_enemies(level_info['enemies'])
         while True:
 
             # Must be at start

@@ -15,6 +15,7 @@ class Tower:
         self.id = None
 
         self.layer = layer
+        self.projectiles = []
 
     def reset(self):
         pass

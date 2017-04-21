@@ -31,6 +31,7 @@ class Tower:
         self.shots = []
         self.points = [self.pos]
         self.last_time = 0
+        self.projectiles = []
 
     def show_shot(self, window, window_scale, dt):
         for shot in self.shots:

@@ -3,7 +3,7 @@ from enemy_things import path_finder
 import global_functions as gfunc
 
 # Import enemies
-from enemy_things import walker
+from enemy_things import walker, sprinter
 
 class Enemy_Handler:
 
@@ -52,36 +52,18 @@ class Enemy_Handler:
 
         # Store the objects
         self.enemies = []
+        last_time = 0
 
-        start_time = 0
+        for enemy in enemies:
+            name, scale, speed, amount, init_t, mid_t = enemy
 
-        # Go over all the groups
-        for enemy_group in enemies:
+            last_time += init_t
 
-            # Work it out once and once only fo this group
-            enemy_type = eval(enemy_group[0])
+            for index in range(amount):
 
-            scale = enemy_group[1]
-            speed = enemy_group[2]
-
-            # Make the specified amount
-            for enemy_index in range(enemy_group[3]):
-                time_until_spawn = enemy_group[4] + enemy_index * enemy_group[5] + start_time
-
-                try:
-                    # Make enemy string eg. 'walker' into the enemy object (MUST BE IMPORTED!)
-                    obj = enemy_type.Enemy(scale, speed, time_until_spawn)
-                    self.enemies.append(obj)
-
-                except Exception as error:
-
-                    print(error)
-                    print('''
-Cannot make the enemy into an object!
-Check that the enemy file is imported into the 'enemy_manager.pyw' file''')
-
-            start_time += enemy_group[3] * enemy_group[5] + enemy_group[4]
-
+                last_time += mid_t
+                string = name + '.Enemy(scale, speed, last_time)'
+                self.enemies.append(eval(string))
 
     blocks = []     # Keep track of the blocks on the grid to avoid updating the path when it doesn't need to
     path = None
