@@ -164,6 +164,8 @@ def event_loop():
     for e in event.get():
         if e.type == QUIT:
             quit()
+            import sys
+            sys.exit()
         if e.type == VIDEORESIZE:
             return e.w, e.h
 

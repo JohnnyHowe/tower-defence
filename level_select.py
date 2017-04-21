@@ -35,12 +35,12 @@ def run(window_size, old_window):
             gfunc.text_button(window, window_size, (0,0), str(number), (150, 150, 150), (pos[0], pos[1], height, height), alignment = 'center')
 
 
-    level_info = pickle.load(open('levels.dat', 'rb'))
+    level_info = pickle.load(open('levels', 'rb'))
     levels = len(level_info)
     max_columns = 5
 
     # User data
-    user_data = pickle.load(open('user_data.dat', 'rb'))
+    user_data = pickle.load(open('user_data', 'rb'))
 
     while True:
 
@@ -114,19 +114,19 @@ def run(window_size, old_window):
 
         if button_pressed:
             val, surf = game.run(button_pressed, levels, window_size, window)
-            user_data = pickle.load(open('user_data.dat', 'rb'))
+            user_data = pickle.load(open('user_data', 'rb'))
 
             rect = surf.get_rect(); window_size = rect.width, rect.height
             screen = display.set_mode(window_size, RESIZABLE)
 
             if type(val) == int: game.run(val, levels, window_size, surf)
-            user_data = pickle.load(open('user_data.dat', 'rb'))
+            user_data = pickle.load(open('user_data', 'rb'))
             continue
 
         while True:
             if type(ret) == int:
                 ret, new_window = game.run(button_pressed + 1, levels, window_size, new_window)
-                user_data = pickle.load(open('user_data.dat', 'rb'))
+                user_data = pickle.load(open('user_data', 'rb'))
                 rect = new_window.get_rect(); window_size = rect.width, rect.height
             else: break
 

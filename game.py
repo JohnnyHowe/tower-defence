@@ -12,7 +12,7 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
     clock = time.Clock()
 
     # Get level info
-    level_info = pickle.load(open('levels.dat', 'rb'))[level]
+    level_info = pickle.load(open('levels', 'rb'))[level]
     money = level_info['start_money']
 
 
@@ -306,11 +306,11 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
         if not restart:
             if state == 1:
 
-                user_data = pickle.load(open('user_data.dat', 'rb'))
+                user_data = pickle.load(open('user_data', 'rb'))
                 user_data['level'] += 1
 
                 # Save file
-                file = open('user_data.dat', 'wb')
+                file = open('user_data', 'wb')
                 pickle.dump(user_data, file)
                 file.close()
 
