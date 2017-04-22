@@ -55,28 +55,30 @@ class Tower:
 
         return enemies
 
-    def show_external(self, window, window_scale, dt, *args):
+    def show_external(self, window, window_scale, dt, finish = False, *args):
 
-        if key.get_pressed()[K_F2]:
-            draw.circle(window, (0, 0, 255), (int((self.pos[0] + 0.5) * window_scale), int((self.pos[1] + 0.5) * window_scale)), int(window_scale * self.radius), 1)
+        if not finish:
 
-        for circle in self.circles:
+            if key.get_pressed()[K_F2]:
+                draw.circle(window, (0, 0, 255), (int((self.pos[0] + 0.5) * window_scale), int((self.pos[1] + 0.5) * window_scale)), int(window_scale * self.radius), 1)
 
-            circle[0] += random.randint(-90, 90) * dt * 50
-            circle[0] = gfunc.fix_angle(circle[0])
+            for circle in self.circles:
 
-            width = window_scale * 3 * circle[2]
+                circle[0] += random.randint(-90, 90) * dt * 50
+                circle[0] = gfunc.fix_angle(circle[0])
 
-            img = transform.scale(lightning_img, (int(width), int(width)))
-            img = transform.rotate(img, int(circle[0]))
+                width = window_scale * 3 * circle[2]
 
-            rect = img.get_rect()
-            center_pos = [self.pos[0] + 0.5, self.pos[1] + 0.5]
-            center_pos[0] *= window_scale; center_pos[1] *= window_scale
+                img = transform.scale(lightning_img, (int(width), int(width)))
+                img = transform.rotate(img, int(circle[0]))
 
-            pos = center_pos[0] - rect.width / 2, center_pos[1] - rect.height / 2
+                rect = img.get_rect()
+                center_pos = [self.pos[0] + 0.5, self.pos[1] + 0.5]
+                center_pos[0] *= window_scale; center_pos[1] *= window_scale
 
-            window.blit(img, pos)
+                pos = center_pos[0] - rect.width / 2, center_pos[1] - rect.height / 2
+
+                window.blit(img, pos)
 
 
     def update(self, window, window_scale, playing_grid, dt):

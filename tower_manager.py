@@ -4,18 +4,24 @@ import global_functions as gfunc
 import math
 
 # Import towers
-from towers import block, machine_gun, sniper, mortar, killing_floor, lightning, op
+from towers import block, machine_gun, sniper, mortar, killing_floor, lightning
 
 class Tower_Handler:
 
     def __init__(self):
-        self.tower_names = ['block', 'killing_floor', 'machine_gun', 'sniper', 'mortar', 'lightning', 'op']
+        self.tower_names = ['block', 'killing_floor', 'machine_gun', 'sniper', 'mortar', 'lightning']
         self.usable_towers = []
         for tower in self.tower_names: self.usable_towers.append(eval(tower))
 
         self.towers = []
         self.blocks = []
 
+    def move_external(self, dt):
+        for tower in self.towers:
+            try:
+                tower.move_external(dt)
+            except:
+                pass
 
     def do_damage(self, enemies, window_scale):
 
@@ -278,7 +284,7 @@ class Tower_Handler:
 
         return money
 
-    def show_external(self, window, window_scale, dt):
+    def show_external(self, window, window_scale, dt, finish = False):
 
         for tower in self.towers:
-            tower.show_external(window, window_scale, dt)
+            tower.show_external(window, window_scale, dt, finish = finish)

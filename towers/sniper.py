@@ -127,7 +127,7 @@ class Tower:
                 return
         self.aiming = False
 
-    def show_external(self, window, window_scale, dt):
+    def show_external(self, window, window_scale, dt, finish = False):
         self.show_shot(window, window_scale, dt)
 
     def update(self, window, window_scale, playing_grid, dt):

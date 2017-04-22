@@ -265,7 +265,11 @@ class Tower:
         window.blit(base, pos)
         window.blit(barrel, (pos[0] + offset[0] + xc, pos[1] + offset[1] + yc))
 
-    def show_external(self, window, window_scale, dt, *args):
+    def move_external(self, dt):
+        for bullet in self.projectiles:
+            bullet.move(dt)
+
+    def show_external(self, window, window_scale, dt, finish = False, *args):
         time_between = 1 / len(self.images)
 
         for bullet in self.projectiles:

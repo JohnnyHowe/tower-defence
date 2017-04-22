@@ -103,6 +103,11 @@ class Tower:
         self.time = 1
         self.last_shot = random.random() * self.time
 
+
+    def move_external(self, dt):
+        for bullet in self.projectiles:
+            bullet.move(dt)
+
     def shoot(self, dt):
 
         self.last_shot += dt * 10
@@ -186,7 +191,7 @@ class Tower:
                 return
         self.aiming = False
 
-    def show_external(self, window, window_scale, dt, *args):
+    def show_external(self, window, window_scale, dt, finish = False, *args):
         for bullet in self.projectiles:
             bullet.show(window, window_scale, dt)
 

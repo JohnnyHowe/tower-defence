@@ -5,6 +5,7 @@ import mouse_extras, level_select
 def run(window_size):
 
     init()
+    display.set_caption('Tower Defence!')
     screen = display.set_mode(window_size, RESIZABLE)
     test_font = font.SysFont('arial', 100)
     clock = time.Clock()

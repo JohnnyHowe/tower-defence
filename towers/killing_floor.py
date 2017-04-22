@@ -42,7 +42,7 @@ class Tower:
     def update(self, window, window_scale, playing_grid, dt):
         self.show(window, window_scale, dt)
 
-    def show_external(self, *args):
+    def show_external(self, finish = False, *args):
         pass
 
     def show(self, window, window_scale, dt):

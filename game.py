@@ -164,6 +164,10 @@ def run(level, max_levels, window_size, old_window, y_change = -1):
 
                     # Update towers
                     money = tower_handler.tower_selection(game_window, game_scale, game_grid, tower_select_rows, money, dt)
+                    tower_handler.show_external(game_window, game_scale, dt, finish = True)
+                    #tower_handler.update_towers(game_window, game_scale, playing_grid, dt)
+                    tower_handler.move_external(dt)
+
 
                     # Update path
                     enemy_handler.update_path(game_window, game_scale, game_grid, tower_handler.blocks, dt)
