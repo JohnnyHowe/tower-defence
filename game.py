@@ -2,6 +2,7 @@ import pygame
 from window import Window
 from game_grid import GameGrid
 from game_window import GameWindow
+from event_handler import EventHandler
 
 
 class Game:
@@ -13,18 +14,14 @@ class Game:
         self.game_window = GameWindow(self.board.size)
 
     def update(self):
-        self.event_loop()
+        EventHandler.update()
+
+        for event in EventHandler.get_events(pygame.MOUSEBUTTONDOWN):
+            if event.button == 1:
+                pass
 
     def draw(self):
-        self.game_window.draw()
-
-    def event_loop(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    quit()
-            if event.type == pygame.VIDEORESIZE:
-                Window.update_size((event.w, event.h))
-
+        self.game_window.draw_background()
+        if pygame.mouse.get_focused():
+            pygame.draw.rect(Window.surface, (0, 255, 0), self.game_window.get_cell_pixel_rect(self.game_window.get_mouse_cell()))
+        self.game_window.draw() 
