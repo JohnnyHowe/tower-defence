@@ -18,14 +18,23 @@ class Game:
     def update(self):
         EventHandler.update()
 
-        for event in EventHandler.get_events(pygame.MOUSEBUTTONDOWN):
-            if event.button == 1:
-                cell = self.game_window.get_mouse_cell()
-                if self.board.is_empty(cell):
-                    self.board.set_at(cell, Wall(cell))
-            if event.button == 3:
-                cell = self.game_window.get_mouse_cell()
-                self.board.clear_at(cell)
+        # place towers
+        keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[pygame.K_LSHIFT]:
+            if pygame.mouse.get_pressed()[0]:
+                self.try_place_tower(self.game_window.get_mouse_cell())
+            elif pygame.mouse.get_pressed()[2]:
+                self.board.clear_at(self.game_window.get_mouse_cell())
+        else:
+            for event in EventHandler.get_events(pygame.MOUSEBUTTONDOWN):
+                if event.button == 1:
+                    self.try_place_tower(self.game_window.get_mouse_cell())
+                if event.button == 3:
+                    self.board.clear_at(self.game_window.get_mouse_cell())
+ 
+    def try_place_tower(self, cell):
+        if self.board.is_empty(cell):
+            self.board.set_at(cell, Wall(cell))
 
     def draw(self):
         self.game_window.draw_background()
@@ -37,5 +46,13 @@ class Game:
             image = tower.get_image(self.board)
             image = pygame.transform.scale(image, (int(self.game_window.get_cell_pixel_size()),) * 2)
             Window.surface.blit(image, self.game_window.get_cell_pixel_position(tower.position))
+
+        # show path
+        path = self.board.get_path()
+        for i in range(len(path) - 1):
+            pos1 = self.game_window.get_cell_pixel_position(path[i])
+            pos2 = self.game_window.get_cell_pixel_position(path[i + 1])
+            size = self.game_window.get_cell_pixel_size()
+            pygame.draw.line(Window.surface, (255, 0, 0), (pos1[0] + size / 2, pos1[1] + size / 2), (pos2[0] + size / 2, pos2[1] + size / 2), 3)
 
         self.game_window.draw() 

@@ -33,3 +33,24 @@ class GameGrid:
 
     def clear_at(self, position):
         self.set_at(position, None)
+
+    def get_path(self):
+        """ BFS """
+        candidates = [(-1, y, None) for y in range(self.size[1])]
+        explored = []
+        final_node = None
+        while len(candidates) > 0:
+            candidate = candidates.pop(0)
+            explored.append(candidate[:2])
+            if candidate[0] >= self.size[0] - 1:
+                final_node = candidate
+                break
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                neighbour = (candidate[0] + dx, candidate[1] + dy, candidate)
+                if neighbour[:2] not in explored and self.is_on_grid(neighbour[:2]) and self.is_empty(neighbour[:2]):
+                    candidates.append(neighbour)
+        path = []
+        while final_node is not None:
+            path.append(final_node)
+            final_node = final_node[2]
+        return path
