@@ -34,8 +34,7 @@ class Game:
             pygame.draw.rect(Window.surface, (0, 255, 0), self.game_window.get_cell_pixel_rect(self.game_window.get_mouse_cell()))
 
         for tower in self.board.get_all():
-            # pygame.draw.rect(Window.surface, (0, 0, 255), self.game_window.get_cell_pixel_position(tower.position) + (0.8 * self.game_window.get_cell_pixel_size(),) * 2)
-            image = tower.get_image()
+            image = tower.get_image(self.board)
             image = pygame.transform.scale(image, (int(self.game_window.get_cell_pixel_size()),) * 2)
             Window.surface.blit(image, self.game_window.get_cell_pixel_position(tower.position))
 

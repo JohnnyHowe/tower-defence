@@ -12,14 +12,14 @@ class GameGrid:
         self.size = size
 
     def get_at(self, position: tuple):
-        if not self.is_on_grid(position):
-            raise Exception("Cannot get item at position {}".format(position))
+        if not self.is_on_grid(position): return None
         return self.items[self.get_index(position)]
 
     def set_at(self, position, obj):
         self.items[self.get_index(position)] = obj
 
     def is_empty(self, position):
+        if not self.is_on_grid(position): return False
         return self.get_at(position) is None
 
     def get_index(self, position: tuple) -> int:
