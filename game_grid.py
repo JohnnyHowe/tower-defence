@@ -55,7 +55,7 @@ class GridPathFinder:
             return None
 
         # Construct path/backtrack
-        path = [final_node[:2]]
+        path = [(final_node[0] + 1, final_node[1])]
         while final_node is not None:
             path.append(final_node[:2])
             final_node = final_node[2]
