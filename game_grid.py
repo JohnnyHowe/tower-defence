@@ -1,6 +1,3 @@
-import threading 
-import multiprocessing
-
 class GridPathFinder:
     last_board_id: str
     path: list
@@ -13,7 +10,7 @@ class GridPathFinder:
 
     def get_board_id(self):
         """ Just a hash of the contents of the board """
-        return hash(str(self.board.items))
+        return hash(str(self.board.items)) + hash(str(self.board.base))
 
     def get_path(self):
         new_id = self.get_board_id()
@@ -34,7 +31,8 @@ class GridPathFinder:
             # Sort candidates by h
 
             candidate = candidates.pop(0)
-            if candidate[:2] in explored: continue
+            if candidate[:2] in explored:
+                continue
             explored.add(candidate[:2])
 
             # If candidate is a goal
@@ -48,7 +46,7 @@ class GridPathFinder:
                 neighbour = neighbour_pos + (candidate, candidate[3] + 1)
 
                 # If neighbour is valid and unexplored
-                if neighbour_pos not in explored and self.board.is_on_grid(neighbour_pos) and self.board.is_empty(neighbour_pos):
+                if neighbour_pos not in explored and self.board.is_on_grid(neighbour_pos) and self.board.is_base_empty(neighbour_pos):
                     candidates.append(neighbour)
 
         if final_node is None:
@@ -60,31 +58,49 @@ class GridPathFinder:
             path.append(final_node[:2])
             final_node = final_node[2]
 
-        return list(reversed(path)) 
+        return list(reversed(path))
 
 
 class GameGrid:
 
     items: list
+    base: list
     size: tuple
     pathfinder: GridPathFinder
 
     def __init__(self, size: tuple):
+        self.base = [None, ] * size[0] * size[1]
         self.items = [None, ] * size[0] * size[1]
         self.size = size
         self.pathfinder = GridPathFinder(self)
 
-    def get_at(self, position: tuple):
-        if not self.is_on_grid(position): return None
+    def get_base_at(self, position: tuple):
+        if not self.is_on_grid(position):
+            return None
+        return self.base[self.get_index(position)]
+
+    def get_item_at(self, position: tuple):
+        if not self.is_on_grid(position):
+            return None
         return self.items[self.get_index(position)]
 
-    def set_at(self, position, obj):
+    def set_base_at(self, position, obj):
+        if self.base[self.get_index(position)] != obj:
+            self.base[self.get_index(position)] = obj
+
+    def set_item_at(self, position, obj):
         if self.items[self.get_index(position)] != obj:
             self.items[self.get_index(position)] = obj
 
-    def is_empty(self, position):
-        if not self.is_on_grid(position): return False
-        return self.get_at(position) is None
+    def is_item_empty(self, position):
+        if not self.is_on_grid(position):
+            return False
+        return self.get_item_at(position) is None
+
+    def is_base_empty(self, position):
+        if not self.is_on_grid(position):
+            return False
+        return self.get_base_at(position) is None
 
     def get_index(self, position: tuple) -> int:
         return position[0] + position[1] * self.size[0]
@@ -92,10 +108,17 @@ class GameGrid:
     def is_on_grid(self, position: tuple) -> bool:
         return 0 <= position[0] < self.size[0] and 0 <= position[1] < self.size[1]
 
-    def get_all(self):
+    def get_all_items(self):
         return [item for item in self.items if item is not None]
 
-    def clear_at(self, position):
+    def get_all_base(self):
+        return [item for item in self.base if item is not None]
+
+    def clear_item_at(self, position):
+        if self.items[self.get_index(position)] is not None:
+            self.set_at(position, None)
+
+    def clear_base_at(self, position):
         if self.items[self.get_index(position)] is not None:
             self.set_at(position, None)
 
