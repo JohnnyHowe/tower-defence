@@ -55,7 +55,7 @@ class Game:
             def draw_line(p1, p2):
                 sp1 = self.game_window.get_cell_pixel_position((p1[0] + 0.5, p1[1] + 0.5))
                 sp2 = self.game_window.get_cell_pixel_position((p2[0] + 0.5, p2[1] + 0.5)) 
-                pygame.draw.line(Window.surface, (255, 165, 0), sp1, sp2, 5)
+                pygame.draw.line(Window.surface, (255, 165, 0), sp1, sp2, int(self.game_window.get_cell_pixel_size() / 8))
 
             for i in range(len(path) - 1):
                 node1 = path[i]
