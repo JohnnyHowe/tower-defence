@@ -12,7 +12,7 @@ class Game:
     game_window = None
 
     def __init__(self):
-        self.board = GameGrid((20, 10))
+        self.board = GameGrid((40, 20))
         self.game_window = GameWindow(self.board.size)
 
     def update(self):

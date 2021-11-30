@@ -1,8 +1,10 @@
+import threading 
+import multiprocessing
 
 class GridPathFinder:
     last_board_id: str
     path: list
-    greediness = 2  # multiplier on heurisitc function
+    greediness = 1  # multiplier on heurisitc function
 
     def __init__(self, board):
         self.board = board
@@ -25,19 +27,15 @@ class GridPathFinder:
 
     def generate_path(self):
         candidates = [(-1, y, None, 0) for y in range(self.board.size[1])]
-        explored = []
+        explored = set()
         final_node = None
-
-        def h(x): return abs(x[0] - self.board.size[0])
-        def c(x): return x[3]
-        def f(x): return c(x) + h(x) * self.greediness
 
         while len(candidates) > 0 and final_node is None:
             # Sort candidates by h
-            candidates.sort(key=f)
 
             candidate = candidates.pop(0)
-            explored.append(candidate[:2])
+            if candidate[:2] in explored: continue
+            explored.add(candidate[:2])
 
             # If candidate is a goal
             if candidate[0] >= self.board.size[0] - 1:
@@ -50,7 +48,7 @@ class GridPathFinder:
                 neighbour = neighbour_pos + (candidate, candidate[3] + 1)
 
                 # If neighbour is valid and unexplored
-                if self.board.is_on_grid(neighbour_pos) and self.board.is_empty(neighbour_pos) and neighbour_pos not in explored:
+                if neighbour_pos not in explored and self.board.is_on_grid(neighbour_pos) and self.board.is_empty(neighbour_pos):
                     candidates.append(neighbour)
 
         if final_node is None:
