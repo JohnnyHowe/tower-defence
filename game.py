@@ -12,7 +12,7 @@ class Game:
     game_window = None
 
     def __init__(self):
-        self.board = GameGrid((10, 5))
+        self.board = GameGrid((20, 10))
         self.game_window = GameWindow(self.board.size)
 
     def update(self):
@@ -49,10 +49,11 @@ class Game:
 
         # show path
         path = self.board.get_path()
-        for i in range(len(path) - 1):
-            pos1 = self.game_window.get_cell_pixel_position(path[i])
-            pos2 = self.game_window.get_cell_pixel_position(path[i + 1])
-            size = self.game_window.get_cell_pixel_size()
-            pygame.draw.line(Window.surface, (255, 0, 0), (pos1[0] + size / 2, pos1[1] + size / 2), (pos2[0] + size / 2, pos2[1] + size / 2), 3)
+        if path is not None:
+            for i in range(len(path) - 1):
+                pos1 = self.game_window.get_cell_pixel_position(path[i])
+                pos2 = self.game_window.get_cell_pixel_position(path[i + 1])
+                size = self.game_window.get_cell_pixel_size()
+                pygame.draw.line(Window.surface, (255, 0, 0), (pos1[0] + size / 2, pos1[1] + size / 2), (pos2[0] + size / 2, pos2[1] + size / 2), 3)
 
         self.game_window.draw() 
