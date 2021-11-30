@@ -2,6 +2,7 @@
 class GridPathFinder:
     last_board_id: str
     path: list
+    greediness = 2  # multiplier on heurisitc function
 
     def __init__(self, board):
         self.board = board
@@ -29,9 +30,9 @@ class GridPathFinder:
 
         def h(x): return abs(x[0] - self.board.size[0])
         def c(x): return x[3]
-        def f(x): return c(x) + h(x)
+        def f(x): return c(x) + h(x) * self.greediness
 
-        while len(candidates) > 0:
+        while len(candidates) > 0 and final_node is None:
             # Sort candidates by h
             candidates.sort(key=f)
 
@@ -62,6 +63,7 @@ class GridPathFinder:
             final_node = final_node[2]
 
         return list(reversed(path)) 
+
 
 class GameGrid:
 
