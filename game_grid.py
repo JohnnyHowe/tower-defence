@@ -114,13 +114,19 @@ class GameGrid:
     def get_all_base(self):
         return [item for item in self.base if item is not None]
 
+    def clear_at(self, position):
+        if not self.is_item_empty(position):
+            self.clear_item_at(position)
+        else:
+            self.clear_base_at(position)
+
     def clear_item_at(self, position):
         if self.items[self.get_index(position)] is not None:
-            self.set_at(position, None)
+            self.set_item_at(position, None)
 
     def clear_base_at(self, position):
-        if self.items[self.get_index(position)] is not None:
-            self.set_at(position, None)
+        if self.base[self.get_index(position)] is not None:
+            self.set_base_at(position, None)
 
     def get_path(self):
         return self.pathfinder.get_path()
