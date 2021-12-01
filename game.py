@@ -38,9 +38,11 @@ class Game:
 
         Camera.size = max(self.board.size) + 1
         Camera.aspect_ratio = (self.board.size[0], self.board.size[1] + 2)
-        Camera.position = (self.board.size[0] / 2, self.board.size[1] / 2)
+        Camera.position = [self.board.size[0] / 2, self.board.size[1] / 2]
 
     def update(self):
+        self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
+
         # is the player placing a tower?
         keys_pressed = pygame.key.get_pressed()
         mouse_pos = Camera.get_world_position(Mouse.get_position())
@@ -110,15 +112,14 @@ class Game:
         for tower in self.board.get_all_base() + self.board.get_all_items():
             Camera.draw_image(tower.get_image(self.board), (tower.position[0], tower.position[1] + 1) + (1, 1))
 
+        self.draw_path()
+
     def draw_path(self):
         path = self.board.get_path()
         if path is not None:
-            self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
 
             def draw_line(p1, p2):
-                sp1 = self.game_window.get_cell_pixel_position((p1[0] + 0.5, p1[1] + 0.5))
-                sp2 = self.game_window.get_cell_pixel_position((p2[0] + 0.5, p2[1] + 0.5)) 
-                pygame.draw.line(Window.surface, (255, 165, 0), sp1, sp2, int(self.game_window.get_cell_pixel_size() / 8))
+                Camera.draw_line((255, 165, 0), p1, p2)
 
             for i in range(len(path) - 1):
                 node1 = path[i]

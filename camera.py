@@ -21,6 +21,11 @@ class _Camera:
         pixel_position = self.get_pixel_position(rect[:2])
         Window.surface.blit(pygame.transform.scale(image, pixel_size), pixel_position)
 
+    def draw_line(self, color, p1, p2, width=0.1):
+        cp1 = (p1[0] + 0.5, p1[1] + 0.5)
+        cp2 = (p2[0] + 0.5, p2[1] + 0.5)
+        pygame.draw.line(Window.surface, color, self.get_pixel_position(cp1), self.get_pixel_position(cp2), int(self.get_pixels_per_unit() * width))
+
     # =========================================================================
     # Math
     # =========================================================================
