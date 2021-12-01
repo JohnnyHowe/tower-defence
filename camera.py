@@ -25,10 +25,12 @@ class _Camera:
     # Math
     # =========================================================================
 
-    def get_pixels_per_unit(self):
+    def get_window_scale(self):
         aspect = self.aspect_ratio[0] / self.aspect_ratio[1]
-        scale = min(Window.size[0], Window.size[1] * aspect)
-        return scale / self.size
+        return min(Window.size[0], Window.size[1] * aspect)
+
+    def get_pixels_per_unit(self):
+        return self.get_window_scale() / self.size
 
     def get_pixel_position(self, game_position):
         return tuple(int(i) for i in self.get_perfect_pixel_position(game_position))
@@ -59,7 +61,6 @@ class _Camera:
             (pixel_position[0] - Window.size[0] / 2) / pixels_per_unit + self.position[0],
             -(pixel_position[1] - Window.size[1] / 2) / pixels_per_unit + self.position[1]
         )
-
 
 
 Camera = _Camera()

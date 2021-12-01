@@ -1,5 +1,6 @@
 import pygame
 
+from mouse import Mouse, MouseButton
 from window import Window
 from event_handler import EventHandler
 from clock import Clock
@@ -15,6 +16,7 @@ def main():
 
     while True:
         EventHandler.update()
+        Mouse.update()
         Clock.update()
 
         # cam zoom controls
@@ -25,8 +27,8 @@ def main():
             else:
                 Camera.size /= zoom_speed 
 
-        dp = pygame.mouse.get_rel()
-        if pygame.mouse.get_pressed()[1]:
+        dp = Mouse.get_position_change()
+        if Mouse.get_pressed(MouseButton.MIDDLE):
             speed_scale = 1 / Camera.get_pixels_per_unit()
             Camera.position[0] -= dp[0] * speed_scale
             Camera.position[1] += dp[1] * speed_scale
