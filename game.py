@@ -28,8 +28,6 @@ class Game:
         # (obj, class, requires base)
         (Wall((0, 0)), Wall, False),
         (MachineGun((0, 0)), MachineGun, True),
-        (Wall((0, 0)), Wall, False),
-        (MachineGun((0, 0)), MachineGun, True),
     ]
 
     def __init__(self):
@@ -73,18 +71,28 @@ class Game:
     def draw_ui(self):
         """ Draw AND handle ui events. 
         Ideally this would be a completely different system but hey, here we are. """
+
+        def draw_text(text, color, font_size, center_position):
+            font = pygame.font.SysFont("", int(font_size))
+            surface = font.render(text, True, color)
+            rect = surface.get_rect()
+            Window.surface.blit(surface, (center_position[0] - rect.w / 2, center_position[1] - rect.h / 2))
+
         ui_scale = Camera.get_window_scale() * 0.1
 
         # header
         header_rect = (0, 0, Window.size[0], ui_scale)
         pygame.draw.rect(Window.surface, (150, 200, 150), header_rect)
 
+        draw_text(str(self.game_state), (0, 0, 0), ui_scale, (Window.size[0] / 2, ui_scale * 0.4))
+        draw_text("Click here to start round", (0, 0, 0), ui_scale * 0.3, (Window.size[0] / 2, ui_scale * 0.8))
+
         # footer (tower selection)
         footer_rect = (0, Window.size[1] - ui_scale, Window.size[0], ui_scale)
         pygame.draw.rect(Window.surface, (150, 200, 150), footer_rect)
 
         for i in range(len(self.towers)):
-            t_object, t_class, requires_base = self.towers[i]
+            t_object = self.towers[i][0]
             tower_rect = (int(i * ui_scale), int(footer_rect[1]), int(ui_scale), int(ui_scale))
             if Mouse.get_pressed(MouseButton.LEFT) and Mouse.is_on_rect(tower_rect):
                 self.selected_tower = i
