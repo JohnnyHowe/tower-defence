@@ -1,4 +1,6 @@
+import enum
 import pygame
+
 from window import Window
 from game_grid import GameGrid
 from game_window import GameWindow
@@ -9,10 +11,16 @@ from wall import Wall
 from machine_gun import MachineGun
 
 
+class GameState(enum.Enum):
+    SETUP = 1
+    IN_PLAY = 2
+
+
 class Game:
     board = None
     game_window = None
     path_visual_timer = 0
+    game_state: GameState
 
     selected_tower = None
     towers = [
@@ -24,6 +32,7 @@ class Game:
     def __init__(self):
         self.board = GameGrid((10, 5))
         self.game_window = GameWindow(self.board.size)
+        self.game_state = GameState.SETUP
 
     def update(self):
 
@@ -82,7 +91,8 @@ class Game:
             image = pygame.transform.scale(image, (int(self.game_window.get_cell_pixel_size()),) * 2)
             Window.surface.blit(image, self.game_window.get_cell_pixel_position(tower.position))
 
-        self.draw_path()
+        if self.game_state == GameState.SETUP:
+            self.draw_path()
 
     def draw_path(self):
         path = self.board.get_path()
@@ -115,3 +125,4 @@ class Game:
 
 
         self.game_window.draw() 
+

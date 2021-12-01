@@ -5,6 +5,7 @@ from window import Window
 class GameWindow:
     """ Specialized window specifically for the game scene.
     Unlike Window, this is not a singleton. """
+    header_height = 1
     tower_selector_height = 1
     board_size = None
 
@@ -16,14 +17,17 @@ class GameWindow:
 
     def draw_background(self):
         scale = self.get_cell_pixel_size()
-
         game_display_size = self.board_size[0] * scale, self.board_size[1] * scale
-        game_display_position = (
-            (Window.size[0] - game_display_size[0]) / 2,
-            (Window.size[1] - game_display_size[1] - scale * self.tower_selector_height) / 2
-        )
+        game_display_position = self.get_cell_pixel_position((0, 0))
+
+        # header
+        header_display_position = game_display_position[0], game_display_position[1] - scale * self.header_height
+        pygame.draw.rect(Window.surface, (200, 200, 200), header_display_position + game_display_size)
+
+        # main grid
         pygame.draw.rect(Window.surface, (255, 255, 255), game_display_position + game_display_size)
 
+        # tower selector
         selector_display_size = game_display_size[0], scale * self.tower_selector_height
         selector_display_position = game_display_position[0], game_display_position[1] + game_display_size[1]
         pygame.draw.rect(Window.surface, (200, 200, 200), selector_display_position + selector_display_size)
@@ -36,8 +40,7 @@ class GameWindow:
         game_display_size = self.board_size[0] * scale, self.board_size[1] * scale
         game_display_position = (
             (Window.size[0] - game_display_size[0]) / 2,
-            (Window.size[1] - game_display_size[1] -
-            scale * self.tower_selector_height) / 2
+            (Window.size[1] - game_display_size[1] - scale * (self.tower_selector_height - self.header_height)) / 2
         )
         return game_display_position[0] + cell_position[0] * scale, game_display_position[1] + cell_position[1] * scale
 
