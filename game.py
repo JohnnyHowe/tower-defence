@@ -8,6 +8,7 @@ from clock import Clock
 from camera import Camera
 from mouse import Mouse, MouseButton
 
+from enemy_controller import EnemyController
 from wall import Wall
 from machine_gun import MachineGun
 
@@ -22,6 +23,7 @@ class Game:
     game_window = None
     path_visual_timer = 0
     game_state: GameState
+    enemy_controller: EnemyController
 
     selected_tower = None
     towers = [
@@ -34,9 +36,15 @@ class Game:
         self.board = GameGrid((10, 5))
         self.game_state = GameState.SETUP
 
+        self.enemy_controller = EnemyController()
+
         Camera.size = max(self.board.size) + 1
         Camera.aspect_ratio = (self.board.size[0], self.board.size[1] + 2)
         Camera.position = [self.board.size[0] / 2, self.board.size[1] / 2]
+
+    def start_round(self):
+        self.game_state = GameState.IN_PLAY
+        self.enemy_controller.start_round()
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
@@ -85,14 +93,18 @@ class Game:
         pygame.draw.rect(Window.surface, (150, 200, 150), header_rect)
 
         draw_text(str(self.game_state), (0, 0, 0), ui_scale, (Window.size[0] / 2, ui_scale * 0.4))
-        draw_text("Click here to start round", (0, 0, 0), ui_scale * 0.3, (Window.size[0] / 2, ui_scale * 0.8))
+
+        if self.game_state == GameState.SETUP:
+            if Mouse.get_pressed(MouseButton.LEFT) and Mouse.is_on_rect(header_rect):
+                self.start_round()
+            draw_text("Click here to start round", (0, 0, 0), ui_scale * 0.3, (Window.size[0] / 2, ui_scale * 0.8))
 
         # footer (tower selection)
         footer_rect = (0, Window.size[1] - ui_scale, Window.size[0], ui_scale)
         pygame.draw.rect(Window.surface, (150, 200, 150), footer_rect)
 
         for i in range(len(self.towers)):
-            t_object = self.towers[i][0]
+            t_object, _, _ = self.towers[i]
             tower_rect = (int(i * ui_scale), int(footer_rect[1]), int(ui_scale), int(ui_scale))
             if Mouse.get_pressed(MouseButton.LEFT) and Mouse.is_on_rect(tower_rect):
                 self.selected_tower = i
@@ -120,7 +132,8 @@ class Game:
         for tower in self.board.get_all_base() + self.board.get_all_items():
             Camera.draw_image(tower.get_image(self.board), (tower.position[0], tower.position[1] + 1) + (1, 1))
 
-        self.draw_path()
+        if self.game_state == GameState.SETUP:
+            self.draw_path()
 
     def draw_path(self):
         path = self.board.get_path()
