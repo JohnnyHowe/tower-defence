@@ -45,7 +45,7 @@ class GameWindow:
         return game_display_position[0] + cell_position[0] * scale, game_display_position[1] + cell_position[1] * scale
 
     def get_cell_pixel_size(self):
-        return min(Window.size[0] / self.board_size[0], Window.size[1] / (self.board_size[1] + self.tower_selector_height))
+        return min(Window.size[0] / self.board_size[0], Window.size[1] / (self.board_size[1] + self.tower_selector_height + self.header_height))
 
     def get_cell_pixel_rect(self, cell_position):
         return self.get_cell_pixel_position(cell_position) + (self.get_cell_pixel_size(),) * 2
@@ -53,14 +53,16 @@ class GameWindow:
     def get_pixel_cell_position(self, pixel_position, check_in_bounds=True):
         top_left = self.get_cell_pixel_position((0, 0))
         scale = self.get_cell_pixel_size()
-        cell_position = (
+        cell_position = [
             int((pixel_position[0] - top_left[0]) / scale),
             int((pixel_position[1] - top_left[1]) / scale)
-        )
+        ]
         if (check_in_bounds and (
                 cell_position[0] < 0 or cell_position[0] > self.board_size[0] - 1 or
                 cell_position[1] < 0 or cell_position[1] > self.board_size[1] - 1 or
                 pixel_position[0] < top_left[0] or
                 pixel_position[1] < top_left[1])):
             return -1, -1
+        if pixel_position[0] < top_left[0]: cell_position[0] -=1
+        if pixel_position[1] < top_left[1]: cell_position[1] -=1
         return cell_position

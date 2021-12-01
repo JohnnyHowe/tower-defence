@@ -50,13 +50,18 @@ class Game:
                 if event.button == 3:
                     self.board.clear_at(self.game_window.get_mouse_cell())
     
-        # did the player click a tower select button?
         for event in EventHandler.get_events(pygame.MOUSEBUTTONDOWN):
             mouse_cell = self.game_window.get_mouse_cell(check_in_bounds=False)
+
+            # did the player click a tower select button?
             if mouse_cell[1] == self.board.size[1]:
                 index = mouse_cell[0]
                 if index < len(self.towers):
                     self.selected_tower = index
+            # did the player click the round start button?
+            if self.game_state == self.game_state.SETUP:
+                if -self.game_window.tower_selector_height <= mouse_cell[1] < 0:
+                    self.game_state = GameState.IN_PLAY
  
     def try_place_tower(self, cell):
         if self.selected_tower is not None:
@@ -94,6 +99,25 @@ class Game:
         if self.game_state == GameState.SETUP:
             self.draw_path()
 
+        self.draw_header_text()
+        self.game_window.draw() 
+
+    def draw_header_text(self):
+        y = self.game_window.get_cell_pixel_position((0, -1))[1] + self.game_window.get_cell_pixel_size() / 2
+        center_x = Window.size[0] / 2
+        scale = self.game_window.get_cell_pixel_size()
+
+        large_font = pygame.font.SysFont("", int(scale * 0.8))
+        small_font = pygame.font.SysFont("", int(scale * 0.3))
+
+        stage_surf = large_font.render(str(self.game_state), True, (0, 0, 0))
+        stage_surf_rect = stage_surf.get_rect()
+        change_stage_surf = small_font.render("Click here to start round", True, (0, 0, 0))
+        change_stage_surf_rect = change_stage_surf.get_rect()
+
+        Window.surface.blit(stage_surf, (center_x - stage_surf_rect.w / 2, y - stage_surf_rect.h / 2 - scale * 0.1))
+        Window.surface.blit(change_stage_surf, (center_x - change_stage_surf_rect.w / 2, y - stage_surf_rect.h / 2 + scale * 0.5))
+
     def draw_path(self):
         path = self.board.get_path()
         if path is not None:
@@ -122,7 +146,3 @@ class Game:
                 else:
                     draw_line(node1, line_end)
                     draw_line(line_start, node2)
-
-
-        self.game_window.draw() 
-
