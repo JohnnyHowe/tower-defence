@@ -33,18 +33,18 @@ class Game:
     ]
 
     def __init__(self):
-        self.board = GameGrid((10, 6))
+        self.board = GameGrid((10, 5))
         self.game_state = GameState.SETUP
 
-        Camera.size = max(self.board.size)
+        Camera.size = max(self.board.size) + 1
         Camera.aspect_ratio = (self.board.size[0], self.board.size[1] + 2)
-        Camera.position[1] = -((self.board.size[1] + 2) % 2) / 2
+        Camera.position = (self.board.size[0] / 2, self.board.size[1] / 2)
 
     def update(self):
         # is the player placing a tower?
         keys_pressed = pygame.key.get_pressed()
         mouse_pos = Camera.get_world_position(Mouse.get_position())
-        mouse_cell = (round(mouse_pos[0] - 0.5), round(mouse_pos[1] + 0.5))
+        mouse_cell = (round(mouse_pos[0] - 0.5), round(mouse_pos[1] - 0.5))
 
         if keys_pressed[pygame.K_LSHIFT]:
             if Mouse.get_pressed(MouseButton.LEFT):
@@ -83,9 +83,9 @@ class Game:
 
         for i in range(len(self.towers)):
             t_object, t_class, requires_base = self.towers[i]
-
             tower_rect = (int(i * ui_scale), int(footer_rect[1]), int(ui_scale), int(ui_scale))
-
+            if Mouse.get_pressed(MouseButton.LEFT) and Mouse.is_on_rect(tower_rect):
+                self.selected_tower = i
             if self.selected_tower == i:
                 pygame.draw.rect(Window.surface, (0, 255, 0), tower_rect)
             image = t_object.get_image(self.board)
@@ -93,8 +93,8 @@ class Game:
 
     def draw_board(self):
         """ Draw the main game board and all its bits. """
-        game_board_top = round(self.board.size[1] / 2)
-        game_board_left = -self.board.size[0] / 2
+        game_board_top = self.board.size[1]
+        game_board_left = 0
         game_board_bottom = game_board_top - self.board.size[1]
 
         # game board
@@ -108,7 +108,7 @@ class Game:
 
         # placed towers
         for tower in self.board.get_all_base() + self.board.get_all_items():
-            Camera.draw_image(tower.get_image(self.board), tower.position)
+            Camera.draw_image(tower.get_image(self.board), (tower.position[0], tower.position[1] + 1) + (1, 1))
 
     def draw_path(self):
         path = self.board.get_path()

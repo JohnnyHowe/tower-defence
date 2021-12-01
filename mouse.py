@@ -30,6 +30,12 @@ class _Mouse:
     def is_focused():
         return pygame.mouse.get_focused()
 
+    def is_on_rect(self, rect):
+        return (
+            rect[0] <= self.position[0] < rect[0] + rect[2] and 
+            rect[1] <= self.position[1] < rect[1] + rect[3] 
+        )
+
     # =========================================================================
     # buttons
     # =========================================================================
