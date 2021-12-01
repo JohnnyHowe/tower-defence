@@ -31,12 +31,13 @@ class Game:
     ]
 
     def __init__(self):
-        self.board = GameGrid((10, 5))
+        self.board = GameGrid((10, 6))
         self.game_window = GameWindow(self.board.size)
         self.game_state = GameState.SETUP
 
         Camera.size = max(self.board.size)
         Camera.aspect_ratio = (self.board.size[0], self.board.size[1] + 2)
+        Camera.position[1] = -((self.board.size[1] + 2) % 2) / 2
 
     def update(self):
 
@@ -79,33 +80,33 @@ class Game:
         # self.game_window.draw_background()
 
         game_board_top = round(self.board.size[1] / 2)
+        game_board_left = -self.board.size[0] / 2
         game_board_bottom = game_board_top - self.board.size[1]
 
         # header
-        Camera.draw_rect((-self.board.size[0] / 2, game_board_top + 1, self.board.size[0], 1), (150, 200, 150))
+        Camera.draw_rect((150, 200, 150), (game_board_left, game_board_top + 1, self.board.size[0], 1))
         # footer (tower selection)
-        Camera.draw_rect((-self.board.size[0] / 2, game_board_bottom, self.board.size[0], 1), (150, 150, 200))
+        Camera.draw_rect((150, 150, 200), (game_board_left, game_board_bottom, self.board.size[0], 1))
         # game board
-        Camera.draw_rect((-self.board.size[0] / 2, game_board_top, self.board.size[0], game_board_top - game_board_bottom), (255, 255, 255))
+        Camera.draw_rect((255, 255, 255), (game_board_left, game_board_top, self.board.size[0], game_board_top - game_board_bottom))
 
-        # # tower selection
-        # for i in range(len(self.towers)):
-        #     t_object, t_class, requires_base = self.towers[i]
-        #     display_rect = self.game_window.get_cell_pixel_rect((i, self.board.size[1]))
+        # tower selection
+        for i in range(len(self.towers)):
+            t_object, t_class, requires_base = self.towers[i]
 
-        #     if self.selected_tower == i:
-        #         pygame.draw.rect(Window.surface, (0, 255, 0), display_rect)
+            # if self.selected_tower == i:
+            # Camera.draw_rect((game_board_left + i, game_board_bottom, 1, 1),)
 
-        #     image = t_object.get_image(self.board)
-        #     image = pygame.transform.scale(image, (int(self.game_window.get_cell_pixel_size()),) * 2)
-        #     Window.surface.blit(image, display_rect[:2])
+            Camera.draw_image(t_object.get_image(self.board), (game_board_left + i, game_board_bottom, 1, 1))
+            # image = pygame.transform.scale(image, (int(self.game_window.get_cell_pixel_size()),) * 2)
+            # Window.surface.blit(image, display_rect[:2])
 
         # highlighted cell
         if pygame.mouse.get_focused():
             # pygame.draw.rect(Window.surface, (0, 255, 0), self.game_window.get_cell_pixel_rect(self.game_window.get_mouse_cell()))
             mouse_pos = Camera.get_world_position(pygame.mouse.get_pos())
             cell_pos = (round(mouse_pos[0] - 0.5), round(mouse_pos[1] + 0.5))
-            Camera.draw_rect(cell_pos + (1, 1), (255, 0, 0))
+            Camera.draw_rect((255, 0, 0), cell_pos + (1, 1))
 
         return
         # placed towers
