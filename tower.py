@@ -6,5 +6,12 @@ class Tower(abc.ABC):
         self.position = position
 
     @abc.abstractmethod
-    def get_image(self, board):
+    def get_icon(self):
+        pass
+
+    @abc.abstractmethod
+    def draw(self):
+        pass
+    
+    def update(self, first_enemy):
         pass

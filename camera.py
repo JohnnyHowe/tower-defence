@@ -1,4 +1,5 @@
 import pygame
+import math
 
 from window import Window
 
@@ -16,10 +17,14 @@ class _Camera:
     def draw_rect(self, color, game_rect):
         pygame.draw.rect(Window.surface, color, self.get_pixel_rect(game_rect))
 
-    def draw_image(self, image, rect):
-        pixel_size = self.get_pixel_size(rect[2:])
-        pixel_position = self.get_pixel_position(rect[:2])
-        Window.surface.blit(pygame.transform.scale(image, pixel_size), pixel_position)
+    def draw_image(self, image, rect, rotation=0):
+        pixel_size = list(self.get_pixel_size(rect[2:]))
+        center_position = self.get_pixel_position((rect[0] + rect[2] / 2, rect[1] + rect[3] / 2))
+        scaled_image = pygame.transform.scale(image, pixel_size)
+        rotated_image = pygame.transform.rotate(scaled_image, rotation * 180 / math.pi)
+        rotated_rect = rotated_image.get_rect()
+        top_left = center_position[0] - rotated_rect.w / 2, center_position[1] - rotated_rect.h / 2
+        Window.surface.blit(rotated_image, top_left)
 
     def draw_line(self, color, p1, p2, width=0.1):
         cp1 = (p1[0] + 0.5, p1[1] + 0.5)
