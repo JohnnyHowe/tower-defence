@@ -38,8 +38,8 @@ class Game:
         Camera.aspect_ratio = (self.board_size[0], self.board_size[1] + 2)
         Camera.position = [self.board_size[0] / 2, self.board_size[1] / 2]
 
-        self.tower_controller.try_place_tower((0, 0), 0)
-        self.tower_controller.try_place_tower((0, 0), 1)
+        self.tower_controller.try_place_tower((1, 1), 0)
+        self.tower_controller.try_place_tower((1, 1), 1)
 
     def start_round(self):
         self.game_state = GameState.IN_PLAY
@@ -69,6 +69,7 @@ class Game:
                 self.tower_controller.board.clear_at(mouse_cell)
     
     def draw(self):
+        self.enemy_controller.draw()
         self.tower_controller.draw()
         self.draw_path()
 
@@ -79,7 +80,6 @@ class Game:
             Camera.draw_rect((255, 0, 0), cell_pos + (1, 1))
 
         self.draw_ui()
-        self.enemy_controller.draw()
 
     def draw_ui(self):
         """ Draw AND handle ui events. 

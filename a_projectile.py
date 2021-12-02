@@ -6,6 +6,8 @@ class AProjectile(abc.ABC):
     Projectiles can be implimented really in any way you want, as long as they
     have the update, draw, and is_expired methods. """
 
+    allowed_out_of_bounds = False
+
     @abc.abstractmethod
     def draw(self):
         pass
@@ -14,5 +16,6 @@ class AProjectile(abc.ABC):
     def update(self):
         pass
 
+    @abc.abstractmethod
     def is_expired(self) -> bool:
         pass

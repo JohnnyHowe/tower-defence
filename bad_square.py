@@ -1,3 +1,4 @@
+import pygame
 from camera import Camera
 from clock import Clock
 
@@ -17,7 +18,8 @@ class BadSquare:
         Camera.draw_rect((255, 0, 0), self.get_game_position() + (1, 1))
 
     def update(self):
-        self.move()
+        if pygame.key.get_pressed()[pygame.K_SPACE]:
+            self.move()
 
     def get_game_position(self):
         t = self.position 

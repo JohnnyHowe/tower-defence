@@ -31,6 +31,9 @@ class _Camera:
         cp2 = (p2[0] + 0.5, p2[1] + 0.5)
         pygame.draw.line(Window.surface, color, self.get_pixel_position(cp1), self.get_pixel_position(cp2), int(self.get_pixels_per_unit() * width))
 
+    def draw_circle(self, color, position, radius):
+        pygame.draw.circle(Window.surface, color, self.get_pixel_position(position), self.get_pixels_per_unit() * radius)
+
     # =========================================================================
     # Math
     # =========================================================================

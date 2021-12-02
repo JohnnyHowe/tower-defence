@@ -46,7 +46,6 @@ class TowerController:
 
         # placed towers
         for tower in self.board.get_all_base() + self.board.get_all_items():
-            # Camera.draw_image(tower.get_image(), (tower.position[0], tower.position[1] + 1) + (1, 1))
             tower.draw()
 
     def draw_projectiles(self):
@@ -59,6 +58,17 @@ class TowerController:
         self.update_projectiles()
 
     def update_projectiles(self):
+        new_projectiles = []
+
         for projectile in self.projectiles:
             projectile.update()
+
+            on_board = 0 <= projectile.position[0] <= self.board.size[0] and 0 <= projectile.position[1] <= self.board.size[1]
+            in_bounds = on_board or projectile.allowed_out_of_bounds
+
+            if in_bounds:
+                new_projectiles.append(projectile)
+        
+        self.projectiles.clear()
+        for i in new_projectiles: self.projectiles.append(i)
 

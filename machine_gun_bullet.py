@@ -20,12 +20,16 @@ class MachineGunBullet(AProjectile):
         self.sprite_sheet = SpriteSheet(SHEET_PATH, (3, 1))
 
     def draw(self):
-        # Camera.draw_rect((0, 0, 0), self.position + [0.1, 0.1])
-        Camera.draw_image(self.sprite_sheet.get_sprite_at((2, 0)), self.position + [1, 1], self.angle)
+        size = 1
+        rect = (self.position[0] - size / 2, self.position[1] - size / 2, size, size)
+        Camera.draw_image(self.sprite_sheet.get_sprite_at((2, 0)), rect, self.angle)
 
     def update(self):
         self.position[0] += self.gradient[0] * self.speed * Clock.dt
         self.position[1] += self.gradient[1] * self.speed * Clock.dt
+
+    def is_expired(self):
+        return False
 
 
 def get_gradient(angle):

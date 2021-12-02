@@ -35,8 +35,8 @@ def main():
 
         Window.surface.fill((100, 100, 100))
 
-        game.update()
         game.draw()
+        game.update()
 
         pygame.display.update()
 
