@@ -6,8 +6,8 @@ from tower import Tower
 SHEET_PATH = "sprites/walls.png"
 
 class Wall(Tower):
-    def __init__(self, position):
-        super().__init__(position)
+
+    def __init_subclass__(self):
         self.sprite_sheet = SpriteSheet(SHEET_PATH, (17, 1))
 
     def draw(self):

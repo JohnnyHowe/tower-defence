@@ -27,6 +27,7 @@ class Game:
 
     selected_tower = None 
 
+
     def __init__(self):
         self.game_state = GameState.SETUP
         self.board_size = (10, 5)
@@ -68,7 +69,7 @@ class Game:
                 self.tower_controller.board.clear_at(mouse_cell)
     
     def draw(self):
-        self.tower_controller.draw_board()
+        self.tower_controller.draw()
         self.draw_path()
 
         # highlighted cell
