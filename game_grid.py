@@ -1,3 +1,6 @@
+from engine_math import Vector2
+
+
 class GridPathFinder:
     last_board_id: str
     path: list
@@ -23,7 +26,7 @@ class GridPathFinder:
         self.path = self.generate_path()
 
     def generate_path(self):
-        candidates = [(-1, y, None, 0) for y in range(self.board.size[1])]
+        candidates = [(Vector2(-1, y), None) for y in range(self.board.size.y)]
         explored = set()
         final_node = None
 
@@ -31,19 +34,19 @@ class GridPathFinder:
             # Sort candidates by h
 
             candidate = candidates.pop(0)
-            if candidate[:2] in explored:
+            if tuple(candidate[0]) in explored:
                 continue
-            explored.add(candidate[:2])
+            explored.add(tuple(candidate[0]))
 
             # If candidate is a goal
-            if candidate[0] >= self.board.size[0] - 1:
+            if candidate[0].x >= self.board.size.x - 1:
                 final_node = candidate
                 break
 
             # Else, add neighbours to candidates
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                neighbour_pos = (candidate[0] + dx, candidate[1] + dy)
-                neighbour = neighbour_pos + (candidate, candidate[3] + 1)
+                neighbour_pos = Vector2(candidate[0].x + dx, candidate[0].y + dy)
+                neighbour = (neighbour_pos, candidate)
 
                 # If neighbour is valid and unexplored
                 if neighbour_pos not in explored and self.board.is_on_grid(neighbour_pos) and self.board.is_base_empty(neighbour_pos):
@@ -53,10 +56,10 @@ class GridPathFinder:
             return None
 
         # Construct path/backtrack
-        path = [(final_node[0] + 1, final_node[1])]
+        path = [Vector2(final_node[0].x + 1, final_node[0].y)]
         while final_node is not None:
-            path.append(final_node[:2])
-            final_node = final_node[2]
+            path.append(final_node[0])
+            final_node = final_node[1]
 
         return list(reversed(path))
 
@@ -69,8 +72,8 @@ class GameGrid:
     pathfinder: GridPathFinder
 
     def __init__(self, size: tuple):
-        self.base = [None, ] * size[0] * size[1]
-        self.items = [None, ] * size[0] * size[1]
+        self.base = [None, ] * size.x * size.y
+        self.items = [None, ] * size.x * size.y
         self.size = size
         self.pathfinder = GridPathFinder(self)
 
@@ -103,10 +106,10 @@ class GameGrid:
         return self.get_base_at(position) is None
 
     def get_index(self, position: tuple) -> int:
-        return position[0] + position[1] * self.size[0]
+        return int(position.x + position.y * self.size.x)
 
-    def is_on_grid(self, position: tuple) -> bool:
-        return 0 <= position[0] < self.size[0] and 0 <= position[1] < self.size[1]
+    def is_on_grid(self, position: Vector2) -> bool:
+        return 0 <= position.x < self.size.x and 0 <= position.y < self.size.y
 
     def get_all_items(self):
         return [item for item in self.items if item is not None]

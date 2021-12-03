@@ -6,6 +6,8 @@ from clock import Clock
 from a_projectile import AProjectile
 from spritesheet import SpriteSheet
 
+from engine_math import Vector2, Rect
+
 
 SHEET_PATH = "sprites/machine_gun.png"
 
@@ -13,20 +15,20 @@ class MachineGunBullet(AProjectile):
 
     speed = 20
 
-    def __init__(self, position: tuple, angle: float):
-        self.position = list(position)
+    def __init__(self, position: Vector2, angle: float):
+        self.position = position
         self.angle = angle
         self.gradient = get_gradient(angle)
         self.sprite_sheet = SpriteSheet(SHEET_PATH, (3, 1))
 
     def draw(self):
         size = 1
-        rect = (self.position[0] - size / 2, self.position[1] - size / 2, size, size)
+        rect = Rect(self.position.x, self.position.y, size, size)
         Camera.draw_image(self.sprite_sheet.get_sprite_at((2, 0)), rect, self.angle)
 
     def update(self):
-        self.position[0] += self.gradient[0] * self.speed * Clock.dt
-        self.position[1] += self.gradient[1] * self.speed * Clock.dt
+        self.position.x += self.gradient.x * self.speed * Clock.dt
+        self.position.y += self.gradient.y * self.speed * Clock.dt
 
     def is_expired(self):
         return False
@@ -63,4 +65,4 @@ def get_gradient(angle):
     if c == 3:
         y, x = x, -y
 
-    return -x, y
+    return Vector2(-x, y)

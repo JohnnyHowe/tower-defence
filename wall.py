@@ -1,17 +1,24 @@
+import pygame
+
 from camera import Camera
+from engine_math import Vector2, Rect
 
 from spritesheet import SpriteSheet
 from tower import Tower
+
 
 SHEET_PATH = "sprites/walls.png"
 
 class Wall(Tower):
 
-    def __init_subclass__(self):
+    sprite_sheet: SpriteSheet
+
+    def __init_subclass__(self) -> None:
         self.sprite_sheet = SpriteSheet(SHEET_PATH, (17, 1))
 
-    def draw(self):
-        Camera.draw_image(self.sprite_sheet.get_sprite_at((16, 0)), self.position + (1, 1))
+    def draw(self) -> None:
+        Camera.draw_image(self.sprite_sheet.get_sprite_at((16, 0)), Rect(self.position.x + 0.5, self.position.y + 0.5, 1, 1))
     
-    def get_icon(self):
-        return self.sprite_sheet.get_sprite_at((16, 0))
+    def draw_icon(self, rect, surface) -> None:
+        surface.blit(pygame.transform.scale(self.sprite_sheet.get_sprite_at((16, 0)), rect.get_size().get_rounded_tuple()), rect.get_bottom_left().get_rounded_tuple())
+

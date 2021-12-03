@@ -1,5 +1,7 @@
 import pygame
 from enum import Enum
+from engine_math import Vector2
+from window import Window
 
 
 class MouseButton:
@@ -13,28 +15,27 @@ class _Mouse:
     buttons = []
     last_buttons = []
 
-    position = [0, 0]
-    last_position = [0, 0]
+    position: Vector2
+    last_position: Vector2 
 
     def __init__(self):
         self.buttons = [0, 0, 0]
         self.last_buttons = [0, 0, 0]
+        self.position = Vector2(0, 0)
+        self.last_position = Vector2(0, 0)
 
     def update(self):
         self.last_buttons = self.buttons
         self.buttons = pygame.mouse.get_pressed()
-        self.last_position = self.position
-        self.position = pygame.mouse.get_pos()
+
+        self.last_position = self.position.get_copy()
+        mouse_pos_tuple = pygame.mouse.get_pos()
+        self.position.x = mouse_pos_tuple[0]
+        self.position.y = mouse_pos_tuple[1]
     
     @staticmethod
     def is_focused():
         return pygame.mouse.get_focused()
-
-    def is_on_rect(self, rect):
-        return (
-            rect[0] <= self.position[0] < rect[0] + rect[2] and 
-            rect[1] <= self.position[1] < rect[1] + rect[3] 
-        )
 
     # =========================================================================
     # buttons
@@ -56,11 +57,11 @@ class _Mouse:
     # position
     # =========================================================================
 
-    def get_position(self):
+    def get_position(self) -> Vector2:
         return self.position
 
-    def get_position_change(self):
-        return (self.position[0] - self.last_position[0], self.position[1] - self.last_position[1])
+    def get_position_change(self) -> Vector2:
+        return self.position - self.last_position
 
 
 Mouse = _Mouse()

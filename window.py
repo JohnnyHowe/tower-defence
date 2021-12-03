@@ -1,4 +1,5 @@
 import pygame
+from engine_math import Vector2
 
 
 class _Window:
@@ -8,13 +9,15 @@ class _Window:
     Contains the pygame surface used for displaying things. 
     
     Is singleton but because of python module gunk you don't need to use .get_instance, just Window. """
-    def __init__(self):
-        self.size = (500, 500)
-        self.surface = pygame.display.set_mode(self.size, pygame.RESIZABLE)
+    size: Vector2
+    surface: pygame.Surface
 
-    def update_size(self, new_size):
+    def __init__(self):
+        self.update_size(Vector2(500, 500))
+
+    def update_size(self, new_size: Vector2) -> None:
         self.size = new_size
-        self.surface = pygame.display.set_mode(self.size, pygame.RESIZABLE)
+        self.surface = pygame.display.set_mode(self.size.get_rounded_tuple(), pygame.RESIZABLE)
 
 
 Window = _Window()

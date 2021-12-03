@@ -6,6 +6,8 @@ from event_handler import EventHandler
 from clock import Clock
 from camera import Camera
 
+from engine_math import Vector2, Rect
+
 from game import Game
 
 
@@ -30,8 +32,8 @@ def main():
         dp = Mouse.get_position_change()
         if Mouse.get_pressed(MouseButton.MIDDLE):
             speed_scale = 1 / Camera.get_pixels_per_unit()
-            Camera.position[0] -= dp[0] * speed_scale
-            Camera.position[1] += dp[1] * speed_scale
+            Camera.position.x -= dp.x * speed_scale
+            Camera.position.y += dp.y * speed_scale
 
         Window.surface.fill((100, 100, 100))
 
