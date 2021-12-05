@@ -43,10 +43,17 @@ class Game:
     def start_round(self):
         self.game_state = GameState.IN_PLAY
         self.enemy_controller.start_round(self.tower_controller.board.get_path())
+    
+    def update_enemies(self):
+        for enemy in self.enemy_controller.enemies:
+            for projectile in self.tower_controller.projectiles:
+                if projectile.get_rect().touching(enemy.get_rect()):
+                    enemy.health -= projectile.get_damage()
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
         self.enemy_controller.update()
+        self.update_enemies()
 
         if self.game_state == GameState.IN_PLAY:
             first_enemy = self.enemy_controller.get_first_enemy()

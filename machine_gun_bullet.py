@@ -14,6 +14,7 @@ SHEET_PATH = "sprites/machine_gun.png"
 class MachineGunBullet(AProjectile):
 
     speed = 20
+    damage = 0.1
 
     def __init__(self, position: Vector2, angle: float):
         self.position = position
@@ -22,8 +23,7 @@ class MachineGunBullet(AProjectile):
         self.sprite_sheet = SpriteSheet(SHEET_PATH, (3, 1))
 
     def draw(self):
-        size = 1
-        rect = Rect(self.position.x, self.position.y, size, size)
+        rect = self.get_rect() 
         Camera.draw_image(self.sprite_sheet.get_sprite_at((2, 0)), rect, self.angle)
 
     def update(self):
@@ -32,6 +32,12 @@ class MachineGunBullet(AProjectile):
 
     def is_expired(self):
         return False
+
+    def get_rect(self):
+        return Rect(self.position.x, self.position.y, 1, 1)
+
+    def get_damage(self):
+        return self.damage
 
 
 def get_gradient(angle):

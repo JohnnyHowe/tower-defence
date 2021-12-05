@@ -57,16 +57,14 @@ class TowerController:
 
     def update_projectiles(self):
         new_projectiles = []
-
         for projectile in self.projectiles:
             projectile.update()
-
             on_board = 0 <= projectile.position.x <= self.board.size.x and 0 <= projectile.position.y <= self.board.size.y
             in_bounds = on_board or projectile.allowed_out_of_bounds
-
             if in_bounds:
                 new_projectiles.append(projectile)
-        
         self.projectiles.clear()
         for i in new_projectiles: self.projectiles.append(i)
+
+    
 

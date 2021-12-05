@@ -33,6 +33,14 @@ class Rect:
             self.x - self.w / 2 <= position.x <= self.x + self.w / 2 and
             self.y - self.h / 2 <= position.y <= self.y + self.h / 2
         )
+    
+    def touching(self, other):
+        return (
+            self.x + self.w / 2 >= other.x - other.w / 2 and
+            self.x - self.w / 2 <= other.x + other.w / 2 and
+            self.y + self.h / 2 >= other.y - other.h / 2 and
+            self.y - self.h / 2 <= other.y + other.h / 2
+        )
 
-    def __repr__(self):
-        return "Rect({}, {}, {}, {})".format(self.x, self.y, self.w, self.h)
+    def __repr__(self, n=5):
+        return "Rect({}, {}, {}, {})".format(round(self.x, n), round(self.y, n), round(self.w, n), round(self.h, n))

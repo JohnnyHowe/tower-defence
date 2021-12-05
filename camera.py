@@ -15,9 +15,12 @@ class _Camera:
     # Drawing
     # =========================================================================
 
-    def draw_rect(self, color: tuple, game_rect: Rect) -> None:
+    def draw_rect(self, color: tuple, game_rect: Rect, outline_width=None) -> None:
         """ Draw a solid rectangle in game space at game_rect. """
-        pygame.draw.rect(Window.surface, color, self.get_pixel_rect(game_rect).get_pygame_tuple())
+        if outline_width is None:
+            pygame.draw.rect(Window.surface, color, self.get_pixel_rect(game_rect).get_pygame_tuple())
+        else:
+            pygame.draw.rect(Window.surface, color, self.get_pixel_rect(game_rect).get_pygame_tuple(), outline_width * self.get_pixels_per_unit())
 
     def draw_image(self, image: pygame.Surface, rect: Rect, rotation=0) -> None:
         """ Draw the image in game space at rect.
