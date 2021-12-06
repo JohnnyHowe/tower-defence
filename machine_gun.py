@@ -33,7 +33,7 @@ class MachineGun(Tower):
         Camera.draw_image(self.sprite_sheet.get_sprite_at((1, 0)), Rect(self.position.x + 0.5, self.position.y + 0.5, 1, 1), self.rotation)
 
     def update(self, first_enemy):
-        enemy_position = first_enemy.get_game_position()
+        enemy_position = first_enemy.get_position()
         dp = (self.position + Vector2(0.5, 0.5)) - enemy_position
         self.rotation = math.atan2(dp.y, dp.x) + math.pi / 2
 
