@@ -9,8 +9,12 @@ class EnemyController:
         self.enemies.append(BadSquare(path))
 
     def update(self):
+        new_enemies = []
         for enemy in self.enemies:
             enemy.update()
+            if not enemy.is_dead():
+                new_enemies.append(enemy)
+        self.enemies = new_enemies
 
     def draw(self):
         for enemy in self.enemies:
