@@ -19,6 +19,7 @@ class GameState(enum.Enum):
     SETUP = 1
     IN_PLAY = 2
     LOST = 3
+    WON = 4
 
 
 class Game:
@@ -53,20 +54,23 @@ class Game:
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
+
+        # update controllers
         self.enemy_controller.update()
         self.update_enemies()
+        self.tower_controller.update_projectiles()
 
         if self.game_state == GameState.IN_PLAY:
             first_enemy = self.enemy_controller.get_first_enemy()
             if first_enemy:
                 self.tower_controller.update(first_enemy)
-
             if self.enemy_controller.has_enemy_finished():
                 self.game_state = GameState.LOST
+            if self.enemy_controller.is_round_complete():
+                self.game_state = GameState.WON
 
-        self.tower_controller.update_projectiles()
 
-        # is the player placing a tower?
+        # placing of towers
         keys_pressed = pygame.key.get_pressed()
         mouse_pos = Camera.get_world_position(Mouse.get_position())
         mouse_cell = round(mouse_pos - Vector2(0.5, 0.5))
