@@ -1,5 +1,5 @@
 import pygame
-from engine_math import Vector2
+from engine.vector2 import Vector2
 
 
 class _Window:

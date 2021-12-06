@@ -1,6 +1,6 @@
 import abc
 
-from engine_math.rect import Rect
+from engine.rect import Rect
 
 
 class AProjectile(abc.ABC):

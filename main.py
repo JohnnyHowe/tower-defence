@@ -1,12 +1,13 @@
 import pygame
 
-from mouse import Mouse, MouseButton
-from window import Window
-from event_handler import EventHandler
-from clock import Clock
-from camera import Camera
+from engine.mouse import Mouse, MouseButton
+from engine.window import Window
+from engine.event_handler import EventHandler
+from engine.clock import Clock
+from engine.camera import Camera
 
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
 from game import Game
 

@@ -1,11 +1,12 @@
-from clock import Clock
-from camera import Camera
+from engine.clock import Clock
+from engine.camera import Camera
 
 from game_grid import GameGrid
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
 from wall import Wall
-from machine_gun import MachineGun
+from engine.machine_gun import MachineGun
 
 
 class TowerController:

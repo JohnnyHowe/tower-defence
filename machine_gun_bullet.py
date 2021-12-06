@@ -1,12 +1,13 @@
 import math
 
-from camera import Camera
-from clock import Clock
+from engine.camera import Camera
+from engine.clock import Clock
 
 from a_projectile import AProjectile
 from spritesheet import SpriteSheet
 
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
 
 SHEET_PATH = "sprites/machine_gun.png"

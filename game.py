@@ -1,18 +1,19 @@
 import enum
 import pygame
 
-from window import Window
-from event_handler import EventHandler
-from clock import Clock
-from camera import Camera
-from mouse import Mouse, MouseButton
+from engine.window import Window
+from engine.event_handler import EventHandler
+from engine.clock import Clock
+from engine.camera import Camera
+from engine.mouse import Mouse, MouseButton
 
 from enemy_controller import EnemyController
 from tower_controller import TowerController
 from wall import Wall
-from machine_gun import MachineGun
+from engine.machine_gun import MachineGun
 
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
 class GameState(enum.Enum):
     SETUP = 1

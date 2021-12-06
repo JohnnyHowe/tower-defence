@@ -1,10 +1,11 @@
 import pygame
 import math
 
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
-from camera import Camera
-from clock import Clock
+from engine.camera import Camera
+from engine.clock import Clock
 
 from tower import Tower
 from machine_gun_bullet import MachineGunBullet

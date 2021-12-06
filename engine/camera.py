@@ -1,8 +1,9 @@
 import pygame
 import math
-from engine_math import Vector2, Rect
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
-from window import Window
+from engine.window import Window
 
 
 class _Camera:

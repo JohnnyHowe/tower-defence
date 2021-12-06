@@ -1,6 +1,6 @@
 import pygame
-from window import Window
-from engine_math import Vector2
+from engine.window import Window
+from engine.vector2 import Vector2
 
 
 class _EventHandler:

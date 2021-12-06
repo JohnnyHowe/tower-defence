@@ -1,7 +1,8 @@
 import pygame
 
-from camera import Camera
-from engine_math import Vector2, Rect
+from engine.camera import Camera
+from engine.vector2 import Vector2
+from engine.rect import Rect
 
 from spritesheet import SpriteSheet
 from tower import Tower

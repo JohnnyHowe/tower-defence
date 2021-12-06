@@ -1,7 +1,7 @@
 import pygame
 from enum import Enum
-from engine_math import Vector2
-from window import Window
+from engine.vector2 import Vector2
+from engine.window import Window
 
 
 class MouseButton:
