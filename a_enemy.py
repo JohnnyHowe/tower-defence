@@ -1,4 +1,5 @@
 import abc
+from a_projectile import AProjectile
 
 
 class AEnemy:
@@ -22,4 +23,12 @@ class AEnemy:
 
     @abc.abstractmethod
     def get_distance(self):
+        pass
+
+    @abc.abstractmethod
+    def is_dead(self):
+        pass
+
+    @abc.abstractmethod
+    def take_damage(self, projectile: AProjectile):
         pass

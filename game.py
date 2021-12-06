@@ -49,7 +49,7 @@ class Game:
         for enemy in self.enemy_controller.enemies:
             for projectile in self.tower_controller.projectiles:
                 if projectile.get_rect().touching(enemy.get_rect()):
-                    enemy.health -= projectile.get_damage()
+                    enemy.take_damage(projectile)
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1

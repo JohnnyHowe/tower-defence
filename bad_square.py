@@ -6,6 +6,7 @@ from engine.vector2 import Vector2
 from engine.rect import Rect
 
 from a_enemy import AEnemy
+from a_projectile import AProjectile
 
 
 class BadSquare(AEnemy):
@@ -56,3 +57,9 @@ class BadSquare(AEnemy):
     def get_rect(self):
         game_position = self.get_position() 
         return Rect(game_position.x, game_position.y, 1, 1)
+
+    def is_dead(self):
+        return self.health <= 0
+
+    def take_damage(self, projectile: AProjectile):
+        self.health -= projectile.get_damage()
