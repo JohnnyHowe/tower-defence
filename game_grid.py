@@ -91,10 +91,14 @@ class GameGrid:
         return self.items[self.get_index(position)]
 
     def set_base_at(self, position, obj):
+        if not self.is_on_grid(position):
+            return None
         if self.base[self.get_index(position)] != obj:
             self.base[self.get_index(position)] = obj
 
     def set_item_at(self, position, obj):
+        if not self.is_on_grid(position):
+            return None
         if self.items[self.get_index(position)] != obj:
             self.items[self.get_index(position)] = obj
 
@@ -121,16 +125,22 @@ class GameGrid:
         return [item for item in self.base if item is not None]
 
     def clear_at(self, position):
+        if not self.is_on_grid(position):
+            return None
         if not self.is_item_empty(position):
             self.clear_item_at(position)
         else:
             self.clear_base_at(position)
 
     def clear_item_at(self, position):
+        if not self.is_on_grid(position):
+            return None
         if self.items[self.get_index(position)] is not None:
             self.set_item_at(position, None)
 
     def clear_base_at(self, position):
+        if not self.is_on_grid(position):
+            return None
         if self.base[self.get_index(position)] is not None:
             self.set_base_at(position, None)
 
