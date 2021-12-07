@@ -6,7 +6,7 @@ from engine.vector2 import Vector2
 from engine.rect import Rect
 
 from wall import Wall
-from engine.machine_gun import MachineGun
+from machine_gun import MachineGun
 
 
 class TowerController:

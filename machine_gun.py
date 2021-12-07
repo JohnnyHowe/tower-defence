@@ -7,14 +7,14 @@ from engine.rect import Rect
 from engine.camera import Camera
 from engine.clock import Clock
 
-from tower import Tower
+from a_tower import ATower
 from machine_gun_bullet import MachineGunBullet
 from spritesheet import SpriteSheet
 
 
 SHEET_PATH = "sprites/machine_gun.png"
 
-class MachineGun(Tower):
+class MachineGun(ATower):
 
     rotation: float
     fire_rate = 10

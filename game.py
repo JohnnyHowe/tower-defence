@@ -10,7 +10,7 @@ from engine.mouse import Mouse, MouseButton
 from enemy_controller import EnemyController
 from tower_controller import TowerController
 from wall import Wall
-from engine.machine_gun import MachineGun
+from machine_gun import MachineGun
 
 from engine.vector2 import Vector2
 from engine.rect import Rect

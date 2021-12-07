@@ -4,7 +4,7 @@ from engine.vector2 import Vector2
 from engine.rect import Rect
 
 
-class Tower(abc.ABC):
+class ATower(abc.ABC):
 
     position: Vector2
 

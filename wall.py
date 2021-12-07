@@ -5,12 +5,12 @@ from engine.vector2 import Vector2
 from engine.rect import Rect
 
 from spritesheet import SpriteSheet
-from tower import Tower
+from a_tower import ATower
 
 
 SHEET_PATH = "sprites/walls.png"
 
-class Wall(Tower):
+class Wall(ATower):
 
     sprite_sheet: SpriteSheet
 
