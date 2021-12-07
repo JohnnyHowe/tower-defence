@@ -56,11 +56,14 @@ class GridPathFinder:
             return None
 
         # Construct path/backtrack
-        path = [Vector2(final_node[0].x + 1, final_node[0].y)]
+        path = [
+            Vector2(final_node[0].x + 2, final_node[0].y),
+            Vector2(final_node[0].x + 1, final_node[0].y)
+            ]
         while final_node is not None:
             path.append(final_node[0])
             final_node = final_node[1]
-
+        path.append(path[-1] + Vector2(-1, 0))
         return list(reversed(path))
 
 

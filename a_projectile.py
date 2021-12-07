@@ -29,3 +29,6 @@ class AProjectile(abc.ABC):
     @abc.abstractmethod
     def get_damage(self) -> float:
         pass
+
+    def on_hit(self):
+        pass

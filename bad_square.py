@@ -15,7 +15,7 @@ class BadSquare(AEnemy):
     speed = 2
     path: list
     health: float
-    max_health = 100
+    max_health = 20
 
     def __init__(self, path):
         super().__init__(path)

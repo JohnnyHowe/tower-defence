@@ -47,13 +47,15 @@ class Game:
         self.enemy_controller.start_round(self.tower_controller.board.get_path())
     
     def update_enemies(self):
-        for enemy in self.enemy_controller.enemies:
-            for projectile in self.tower_controller.projectiles:
+        for projectile in self.tower_controller.projectiles:
+            for enemy in self.enemy_controller.enemies:
                 if projectile.get_rect().touching(enemy.get_rect()):
                     enemy.take_damage(projectile)
+                    projectile.on_hit()
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
+        self.handle_tower_placement()
 
         # update controllers
         self.enemy_controller.update()
@@ -69,8 +71,7 @@ class Game:
             if self.enemy_controller.is_round_complete():
                 self.game_state = GameState.WON
 
-
-        # placing of towers
+    def handle_tower_placement(self):
         keys_pressed = pygame.key.get_pressed()
         mouse_pos = Camera.get_world_position(Mouse.get_position())
         mouse_cell = round(mouse_pos - Vector2(0.5, 0.5))

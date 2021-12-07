@@ -18,7 +18,7 @@ class EnemyController:
         self.round = [
             # (type, delay)
             (BadSquare, 1) for i in range(10)
-        ]
+        ] + [(BadSquare, 0.75) for i in range(10)]
 
         self.round_running = False
         self.round_timer = 0
