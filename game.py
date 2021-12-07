@@ -42,34 +42,30 @@ class Game:
         Camera.aspect_ratio = Vector2(self.board_size.x, self.board_size.y + 2)
         Camera.position = Vector2(self.board_size.x / 2, self.board_size.y / 2)
 
-    def start_round(self):
+    def start_wave(self):
         self.game_state = GameState.IN_PLAY
-        self.enemy_controller.start_round(self.tower_controller.board.get_path())
-    
-    def update_enemies(self):
-        for projectile in self.tower_controller.projectiles:
-            for enemy in self.enemy_controller.enemies:
-                if projectile.get_rect().touching(enemy.get_rect()):
-                    enemy.take_damage(projectile)
-                    projectile.on_hit()
+        self.enemy_controller.start_wave(self.tower_controller.board.get_path())
 
     def update(self):
         self.path_visual_timer = (self.path_visual_timer + Clock.dt) % 1
         self.handle_tower_placement()
-
-        # update controllers
-        self.enemy_controller.update()
-        self.update_enemies()
         self.tower_controller.update_projectiles()
 
         if self.game_state == GameState.IN_PLAY:
+            self.enemy_controller.update()
+            self.update_enemies()
+
             first_enemy = self.enemy_controller.get_first_enemy()
             if first_enemy:
                 self.tower_controller.update(first_enemy)
             if self.enemy_controller.has_enemy_finished():
                 self.game_state = GameState.LOST
-            if self.enemy_controller.is_round_complete():
-                self.game_state = GameState.WON
+            if self.enemy_controller.is_wave_complete():
+                self.enemy_controller.wave_number += 1
+                if self.enemy_controller.is_game_complete():
+                    self.game_state = GameState.WON
+                else:
+                    self.game_state = GameState.SETUP
 
     def handle_tower_placement(self):
         keys_pressed = pygame.key.get_pressed()
@@ -86,6 +82,13 @@ class Game:
                 self.tower_controller.try_place_tower(mouse_cell, self.selected_tower)
             if Mouse.get_mouse_down(MouseButton.RIGHT):
                 self.tower_controller.board.clear_at(mouse_cell)
+
+    def update_enemies(self):
+        for projectile in self.tower_controller.projectiles:
+            for enemy in self.enemy_controller.enemies:
+                if projectile.get_rect().touching(enemy.get_rect()):
+                    enemy.take_damage(projectile)
+                    projectile.on_hit()
     
     def draw(self):
         self.tower_controller.draw()
@@ -121,8 +124,8 @@ class Game:
 
         if self.game_state == GameState.SETUP:
             if Mouse.get_pressed(MouseButton.LEFT) and header_rect.contains(Mouse.get_position()):
-                self.start_round()
-            draw_text("Click here to start round", (0, 0, 0), ui_scale * 0.3, Vector2(Window.size.x / 2, ui_scale * 0.8))
+                self.start_wave()
+            draw_text("Click here to start wave", (0, 0, 0), ui_scale * 0.3, Vector2(Window.size.x / 2, ui_scale * 0.8))
 
         # footer (tower selection)
         footer_rect = Rect(Window.size.x / 2, Window.size.y - ui_scale / 2, Window.size.x, ui_scale)

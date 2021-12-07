@@ -5,42 +5,46 @@ from engine.clock import Clock
 
 class EnemyController:
 
-    round: list
-    round_timer: float
-    round_running: bool
-    round_enemy_index: int
-    round_enemy_cumulative_delay: float
+    wave: list
+    wave_number: int
+    wave_timer: float
+    wave_running: bool
+    wave_enemy_index: int
+    wave_enemy_cumulative_delay: float
     enemies: list
     path: list
 
     def __init__(self):
         self.enemies = []
-        self.round = [
-            # (type, delay)
-            (BadSquare, 1) for i in range(10)
-        ] + [(BadSquare, 0.75) for i in range(10)]
+        self.waves = [
+            # [(type, delay)]
+            [(BadSquare, 1) for i in range(10)],
+            [(BadSquare, 0.75) for i in range(10)]
+        ]
 
-        self.round_running = False
-        self.round_timer = 0
+        self.wave_running = False
+        self.wave_timer = 0
+        self.wave_number = 0
 
-    def start_round(self, path):
-        self.round_running = True
-        self.round_timer = 0
-        self.round_enemy_index = 0
-        self.round_enemy_cumulative_delay = 0
+    def start_wave(self, path):
+        self.wave_running = True
+        self.wave_timer = 0
+        self.wave_enemy_index = 0
+        self.wave_enemy_cumulative_delay = 0
         self.path = path
 
     def update(self):
         self.update_enemies()
-        self.update_round()
+        self.update_wave()
 
-    def update_round(self):
-        if self.round_running:
-            self.round_timer += Clock.dt
-            while len(self.round) > self.round_enemy_index and self.round[self.round_enemy_index][1] + self.round_enemy_cumulative_delay < self.round_timer:
-                self.enemies.append(self.round[self.round_enemy_index][0](self.path))
-                self.round_enemy_cumulative_delay += self.round[self.round_enemy_index][1]
-                self.round_enemy_index += 1
+    def update_wave(self):
+        if self.wave_running:
+            self.wave_timer += Clock.dt
+            this_wave = self.waves[self.wave_number]
+            while len(this_wave) > self.wave_enemy_index and this_wave[self.wave_enemy_index][1] + self.wave_enemy_cumulative_delay < self.wave_timer:
+                self.enemies.append(this_wave[self.wave_enemy_index][0](self.path))
+                self.wave_enemy_cumulative_delay += this_wave[self.wave_enemy_index][1]
+                self.wave_enemy_index += 1
 
     def update_enemies(self):
         new_enemies = []
@@ -65,6 +69,9 @@ class EnemyController:
         enemy = self.get_first_enemy()
         return enemy is not None and enemy.has_finished() 
 
-    def is_round_complete(self):
+    def is_wave_complete(self):
         """ Have all the enemies been destroyed and are we finished spawning them? """
-        return len(self.round) <= self.round_enemy_index and len(self.enemies) == 0
+        return len(self.waves[self.wave_number]) <= self.wave_enemy_index and len(self.enemies) == 0
+
+    def is_game_complete(self):
+        return self.wave_number >= len(self.waves)
